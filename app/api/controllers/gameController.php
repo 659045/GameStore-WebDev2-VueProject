@@ -42,7 +42,7 @@ class GameController {
             }
         } catch(Exception $e) {
             http_response_code(500);
-            echo "Error invalid data received";
+            echo "Internal server error";
         }
     }
 

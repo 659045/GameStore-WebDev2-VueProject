@@ -1,10 +1,3 @@
-<script setup>
-    import GameItem from '../components/GameItem.vue';
-    import { ref } from 'vue';
-    import { useGameStore } from '../stores/gameStore.js';
-    import axios from 'axios';
-</script>
-
 <template>
     <div class="content-container">
         <img class="front-image" src="https://media.gq-magazine.co.uk/photos/645b5c3c8223a5c3801b8b26/16:9/w_1280,c_limit/100-best-games-hp-b.jpg">
@@ -15,6 +8,11 @@
 </template>
 
 <script>
+import axios from 'axios';
+import GameItem from '../components/GameItem.vue';
+import { ref } from 'vue';
+import { useGameStore } from '../stores/gameStore.js';
+
 export default {
     name: 'Home',
     data() {
