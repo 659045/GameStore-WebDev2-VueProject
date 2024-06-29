@@ -5,7 +5,7 @@
           <li class="nav-item"><router-link to="/" class="nav-link">Home</router-link></li>
           <li v-if="isLoggedIn" class="nav-item ml-auto"><router-link to="/owned-games" class="nav-link">My Games</router-link></li>
           <li v-if="isLoggedIn" class="nav-item"><router-link to="/cart" class="nav-link">Shopping Cart</router-link></li>
-          <li v-if="isAdmin" class="nav-item ml-auto"><router-link to="/game" class="nav-link">Manage games</router-link></li>
+          <li v-if="isAdmin" class="nav-item ml-auto"><router-link to="/manage-games" class="nav-link">Manage games</router-link></li>
           <li v-if="isPremium || isAdmin" class="nav-item ml-auto"><router-link to="/wishlist" class="nav-link">Wish List</router-link></li>
           <li v-if="isNormal" class="nav-item ml-auto"><router-link to="/user/upgrade" class="nav-link">Upgrade to Premium</router-link></li>
           <li v-if="isLoggedIn" class="nav-item" @click="logout"><router-link to="" class="nav-link">Logout</router-link></li>

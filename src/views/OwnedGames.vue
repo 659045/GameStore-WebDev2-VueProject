@@ -2,7 +2,7 @@
     <header>
         <NavBar />
     </header>
-    <div class="content-container m-5">
+    <div class="content-container p-5">
         <h1>Owned Games</h1>
         <div class="game-grid mt-5">
             <GameItem v-for="game in games" :game="game" :wishList="wishList" :ownedGames="true"/>

@@ -4,7 +4,6 @@
   </header>
   <div>
     <img class="front-image" src="https://media.gq-magazine.co.uk/photos/645b5c3c8223a5c3801b8b26/16:9/w_1280,c_limit/100-best-games-hp-b.jpg">
-  
     <div class="game-grid mt-5">
         <GameItem v-for="game in games" :game="game" :wishList="wishList" :ownedGames="false"/>
     </div>
@@ -62,10 +61,6 @@ export default {
     width: 100%;
     display: block;
     margin: 1% auto 5% auto
-  }
-
-  .content-container {
-    height: 100vh;
   }
 
   .game-grid {

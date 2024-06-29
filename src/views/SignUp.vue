@@ -3,10 +3,6 @@
         <NavBar />
     </header>
     <div>
-      <head>
-        <title>Sign Up</title>
-      </head>
-  
       <form @submit.prevent="handleSignUp">
         <div class="form-group d-flex flex-column">
           <label for="email">Email address</label>
