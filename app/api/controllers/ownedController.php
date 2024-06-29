@@ -19,6 +19,9 @@ class OwnedController {
                     if (isset($_GET['user_id']) && isset($_GET['game_id'])) {
                         $ownedGame = $this->ownedGameService->getOwnedGameByUserIdAndGameId(htmlspecialchars($_GET['user_id']), htmlspecialchars($_GET['game_id']));
                         echo json_encode($ownedGame);
+                    } else if (isset($_GET['user_id'])) {
+                        $ownedGames = $this->ownedGameService->getOwnedGameByUserId(htmlspecialchars($_GET['user_id']));
+                        echo json_encode($ownedGames);
                     } else {
                         $ownedGames = $this->ownedGameService->getAll();
                         echo json_encode($ownedGames);

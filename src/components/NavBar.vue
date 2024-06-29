@@ -3,7 +3,7 @@
       <header class="d-flex justify-content-center py-3">
         <ul class="nav nav-pills">
           <li class="nav-item"><router-link to="/" class="nav-link">Home</router-link></li>
-          <li v-if="isLoggedIn" class="nav-item ml-auto"><router-link to="/owned" class="nav-link">My Games</router-link></li>
+          <li v-if="isLoggedIn" class="nav-item ml-auto"><router-link to="/owned-games" class="nav-link">My Games</router-link></li>
           <li v-if="isLoggedIn" class="nav-item"><router-link to="/cart" class="nav-link">Shopping Cart</router-link></li>
           <li v-if="isAdmin" class="nav-item ml-auto"><router-link to="/game" class="nav-link">Manage games</router-link></li>
           <li v-if="isPremium || isAdmin" class="nav-item ml-auto"><router-link to="/wishlist" class="nav-link">Wish List</router-link></li>
@@ -58,7 +58,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
   .nav-item {
     margin: 0px 5px 0px 5px;
 

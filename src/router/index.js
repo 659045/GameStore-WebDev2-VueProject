@@ -3,7 +3,7 @@ import Home from '../views/Home.vue'
 import NotFound from '../views/404NotFound.vue'
 import Login from '../views/Login.vue'
 import SignUp from '../views/SignUp.vue'
-import MyGames from '@/views/MyGames.vue'
+import OwnedGames from '@/views/OwnedGames.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,9 +19,9 @@ const router = createRouter({
       component: Login
     },
     {
-      path: '/owned',
-      name: 'Owned',
-      component: MyGames
+      path: '/owned-games',
+      name: 'OwnedGames',
+      component: OwnedGames
     },
     {
       path: '/signup',

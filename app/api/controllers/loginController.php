@@ -27,25 +27,13 @@ class LoginController {
                 $password = htmlspecialchars($input['password']);
 
                 if ($this->loginService->login($username, $password)) {
-                    $_SESSION["username"] = $username;
-                    $_SESSION["user_id"] = $this->userService->getUserByUsername($username)->getId();
-
                     $user = $this->userService->getUserByUsername($username);
-
-                    switch ($user->getRole()) {
-                        case 'admin':
-                            $_SESSION["role"] = 'admin';
-                            break;
-                        case 'premium':
-                            $_SESSION["role"] = 'premium';
-                            break;
-                        default:
-                            $_SESSION["role"] = 'normal';
-                            break;
-                    }
                     
                     http_response_code(200);
-                    echo json_encode(["role" => $_SESSION["role"]]);
+                    echo json_encode([
+                        "user_id" => $user->getId(),
+                        "role" => $user->getRole(),
+                    ]);
                 } else {
                     http_response_code(401);
                     echo json_encode(["message" => "Invalid username or password"]);

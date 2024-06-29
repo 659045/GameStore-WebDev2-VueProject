@@ -4,7 +4,7 @@
     </footer>
 </template>
 
-<style>
+<style scoped>
     footer p {
         color: white;
     }

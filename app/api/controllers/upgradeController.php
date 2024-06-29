@@ -24,7 +24,5 @@ class UpgradeController {
         $id = htmlspecialchars($_POST['id']);
 
         $this->userService->upgrade($id);
-
-        $_SESSION['role'] = 'premium';
     }
 }

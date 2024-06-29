@@ -68,8 +68,6 @@ class UserController {
         $user->setId(htmlspecialchars($input['id']));
         $user->setEmail(htmlspecialchars($input['email']));
         $user->setUsername(htmlspecialchars($input['username']));
-
-        $_SESSION['username'] = $user->getUsername();
         
         $this->userService->edit($user);
         http_response_code(200);

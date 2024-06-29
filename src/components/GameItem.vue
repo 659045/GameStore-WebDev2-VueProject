@@ -30,23 +30,22 @@
     name: 'GameItem',
     props: {
       game: Object,
-      isLoggedIn: Boolean,
-      isPremiumOrAdmin: Boolean,
-      user_id: Number,
-      gamesInWishlist: Array
+      wishList: Array,
+      ownedGames: Boolean
     },
     data() {
       return {
-        isLoggedIn: true,
+        isLoggedIn: localStorage.getItem('isLoggedIn'),
+        role: localStorage.getItem('role')
       };
     },
     computed: {
       showWishlistButton() {
-        return this.isLoggedIn && this.isPremiumOrAdmin;
+        return (this.role === 'premium' || this.role === 'admin') && !this.ownedGames;
       },
-      isGameInWishlist() {
-        return this.gamesInWishlist.some(item => item.game_id === this.game.id);
-      }
+      // isGameInWishlist() {
+      //   return this.wishList.some(item => item.game_id === this.game.id);
+      // }
     },
     methods: {
       toggleWishlist() {
@@ -60,6 +59,7 @@
   
         if (isInWishlist) {
           this.$emit('remove-from-wishlist', gameId, data);
+
         } else {
           this.$emit('add-to-wishlist', gameId, data);
         }
@@ -68,7 +68,7 @@
         const gameId = this.game.id;
         const data = { id: gameId };
   
-        this.$emit('add-to-cart', gameId, data);
+        
       }
     }
   };

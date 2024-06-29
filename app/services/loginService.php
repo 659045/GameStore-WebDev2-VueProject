@@ -12,8 +12,4 @@ Class LoginService {
     public function login($username, $password) {
         return $this->userRepository->verifyLoginCredentials($username, $password);
     }
-
-    public function logout() {
-        unset($_SESSION["user"]);
-    }
 }
