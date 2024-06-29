@@ -58,7 +58,7 @@ export default {
                     this.errorMessage = 'Error creating user';
                 }
             } catch (error) {
-                this.errorMessage = error.response.message;
+                this.errorMessage = error.response.data.message;
             }
         },
     }
