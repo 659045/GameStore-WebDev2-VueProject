@@ -1,42 +1,60 @@
 <template>
+    <header>
+        <NavBar />
+    </header>
     <div class="content-container">
-        <div class="form-group d-flex flex-column">
+        <form @submit.prevent="handleLogin" class="form-group d-flex flex-column">
             <label for="username">Username</label>
-            <input type="text" class="form-control" name="username" placeholder="Username" required>
+            <input type="text" class="form-control" v-model="username" placeholder="Username" required>
             <label for="password">Password</label>
-            <input type="password" class="form-control" name="password" placeholder="Password" required>
+            <input type="password" class="form-control" v-model="password" placeholder="Password" required>
             <a href="/signup" class="mx-auto"><small>Don't have a account?</small></a>
-            <label id="labelError" class="label mx-auto"></label>
+            <label v-show="errorMessage" class="mx-auto alert alert-danger mt-3">{{ errorMessage }}</label>
             <button id="btnLogin" @click="login" class="btn btn-primary mx-auto">Login</button>
-        </div>
+        </form>
     </div>
 </template>
 
 <script>
 import axios from 'axios';
+import NavBar from '../components/NavBar.vue';
 
 export default {
     name: 'Login',
+    components: {
+        NavBar,
+    },
     data() {
         return {
             username: '',
             password: '',
+            errorMessage: '',
         };
     },
     methods: {
-        async login() {
-            axios.post('http://localhost/api/login', {
-                username: this.username,
-                password: this.password,
-            }).then((response) => {
+        async handleLogin() {
+            try {
+                const response = await axios.post('http://localhost/api/login', {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    username: this.username,
+                    password: this.password,
+                });
+
                 if (response.status === 200) {
                     this.$router.push('/');
                     localStorage.setItem('isLoggedIn', true);
+                    localStorage.setItem('role', response.data.role);
+                    localStorage.setItem('username', this.username);
                 } else {
-                    document.getElementById('labelError').innerText = 'Invalid username or password';
+                    this.errorMessage = 'Invalid username or password';
                 }
-            });
-        },
+            } catch (error) {
+                this.errorMessage = error.response.data.message;
+            }
+        }
+       
     },
 };
 </script>

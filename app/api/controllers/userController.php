@@ -26,10 +26,11 @@ class UserController {
                     }
                     break;
                 case "POST":
-                    if (isset($_POST['id']))
-                        $this->editUser();
+                    $input = json_decode(file_get_contents('php://input'), true);
+                    if (isset($input['id']))
+                        $this->editUser($input);
                     else
-                        $this->insertUser();
+                        $this->insertUser($input);
                     break;
                 case "DELETE":
                     $data = json_decode(file_get_contents('php://input'));
@@ -39,32 +40,63 @@ class UserController {
                     break;
             }
         } catch (Exception $e) {
-            echo $e->getMessage();
+            http_response_code(500);
+            echo json_encode(["message" => "Internal server error: " . $e->getMessage()]);
         }
     }
 
-    public function insertUser() {
-        $user = new User();
-        $user->setEmail(htmlspecialchars($_POST['email']));
-        $user->setUsername(htmlspecialchars($_POST['username']));
-        $user->setPassword(password_hash(htmlspecialchars($_POST['password']), PASSWORD_DEFAULT));
-        $user->setRole('normal');
+    public function insertUser($input) {
+        $result = $this->validateInputs($input['email'], $input['username'], $input['password']);
 
-        $this->userService->insert($user);
+        if ($result === true) {
+            $user = new User();
+            $user->setEmail(htmlspecialchars($input['email']));
+            $user->setUsername(htmlspecialchars($input['username']));
+            $user->setPassword(password_hash(htmlspecialchars($input['password']), PASSWORD_DEFAULT));
+            $user->setRole('normal');
+    
+            $this->userService->insert($user);
+            http_response_code(201);
+        } else {
+            http_response_code(400);
+            echo json_encode(["message" => $result]);
+        }
     }
 
-    public function editUser() {
+    public function editUser($input) {
         $user = new User();
-        $user->setId(htmlspecialchars($_POST['id']));
-        $user->setEmail(htmlspecialchars($_POST['email']));
-        $user->setUsername(htmlspecialchars($_POST['username']));
+        $user->setId(htmlspecialchars($input['id']));
+        $user->setEmail(htmlspecialchars($input['email']));
+        $user->setUsername(htmlspecialchars($input['username']));
 
         $_SESSION['username'] = $user->getUsername();
         
         $this->userService->edit($user);
+        http_response_code(200);
     }
 
     public function deleteUser($id) {
         $this->userService->delete($id);
+        http_response_code(200);
+    }
+
+    public function validateInputs($email, $username, $password) {
+        if (empty($email) || empty($username) || empty($password)) {
+            return 'Fill in all fields';
+        } 
+        
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return 'Invalid email';
+        } 
+        
+        if ($this->userService->getUserByEmail(htmlspecialchars($email))) {
+            return 'Email already exists';
+        } 
+        
+        if ($this->userService->getUserByUsername(htmlspecialchars($username))) {
+            return 'Username already exists';
+        } 
+        
+        return true;
     }
 }

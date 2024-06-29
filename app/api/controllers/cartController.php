@@ -30,7 +30,8 @@ class CartController {
                     break;
             }  
         } catch (Exception $e) {
-            echo $e->getMessage();
+            http_response_code(500);
+            echo json_encode(["message" => "Internal server error: " . $e->getMessage()]);
         }
     }
 

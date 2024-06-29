@@ -15,8 +15,16 @@ class LoginController {
     public function index() {
         try {
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                $username = htmlspecialchars($_POST['username']);
-                $password = htmlspecialchars($_POST['password']);
+                $input = json_decode(file_get_contents('php://input'), true);
+
+                if (!isset($input['username']) || !isset($input['password'])) {
+                    http_response_code(400);
+                    echo json_encode(["message" => "Fill in all fields"]);
+                    return;
+                }
+
+                $username = htmlspecialchars($input['username']);
+                $password = htmlspecialchars($input['password']);
 
                 if ($this->loginService->login($username, $password)) {
                     $_SESSION["username"] = $username;
@@ -37,15 +45,15 @@ class LoginController {
                     }
                     
                     http_response_code(200);
-                    return $_SESSION["role"];
+                    echo json_encode(["role" => $_SESSION["role"]]);
                 } else {
                     http_response_code(401);
-                    echo "Invalid username or password";
+                    echo json_encode(["message" => "Invalid username or password"]);
                 }
             }
         } catch(Exception $e) {
             http_response_code(500);
-            echo "Internal server error";
+            echo json_encode(["message" => "Internal server error: " . $e->getMessage()]);
         }
         
     }

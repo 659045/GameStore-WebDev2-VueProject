@@ -13,22 +13,27 @@ class OwnedController {
     }
 
     public function index() {
-        switch ($_SERVER['REQUEST_METHOD']) {
-            case 'GET':
-                if (isset($_GET['user_id']) && isset($_GET['game_id'])) {
-                    $ownedGame = $this->ownedGameService->getOwnedGameByUserIdAndGameId(htmlspecialchars($_GET['user_id']), htmlspecialchars($_GET['game_id']));
-                    echo json_encode($ownedGame);
-                } else {
-                    $ownedGames = $this->ownedGameService->getAll();
-                    echo json_encode($ownedGames);
-                }
-                break;
-            case 'POST':
-                $data = json_decode(file_get_contents('php://input'));
-                $this->addOwnedGame($data);
-                break;
-            default:
-                break;
+        try {
+            switch ($_SERVER['REQUEST_METHOD']) {
+                case 'GET':
+                    if (isset($_GET['user_id']) && isset($_GET['game_id'])) {
+                        $ownedGame = $this->ownedGameService->getOwnedGameByUserIdAndGameId(htmlspecialchars($_GET['user_id']), htmlspecialchars($_GET['game_id']));
+                        echo json_encode($ownedGame);
+                    } else {
+                        $ownedGames = $this->ownedGameService->getAll();
+                        echo json_encode($ownedGames);
+                    }
+                    break;
+                case 'POST':
+                    $data = json_decode(file_get_contents('php://input'));
+                    $this->addOwnedGame($data);
+                    break;
+                default:
+                    break;
+            }
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["message" => "Internal server error: " . $e->getMessage()]);
         }
     }
 

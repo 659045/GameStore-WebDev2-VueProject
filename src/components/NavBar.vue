@@ -6,7 +6,7 @@
           <li v-if="isLoggedIn" class="nav-item ml-auto"><router-link to="/owned" class="nav-link">My Games</router-link></li>
           <li v-if="isLoggedIn" class="nav-item"><router-link to="/cart" class="nav-link">Shopping Cart</router-link></li>
           <li v-if="isAdmin" class="nav-item ml-auto"><router-link to="/game" class="nav-link">Manage games</router-link></li>
-          <li v-if="isPremium" class="nav-item ml-auto"><router-link to="/wishlist" class="nav-link">Wish List</router-link></li>
+          <li v-if="isPremium || isAdmin" class="nav-item ml-auto"><router-link to="/wishlist" class="nav-link">Wish List</router-link></li>
           <li v-if="isNormal" class="nav-item ml-auto"><router-link to="/user/upgrade" class="nav-link">Upgrade to Premium</router-link></li>
           <li v-if="isLoggedIn" class="nav-item" @click="logout"><router-link to="" class="nav-link">Logout</router-link></li>
           <li v-if="isLoggedIn" class="nav-item">
@@ -32,17 +32,27 @@ export default {
     return {
       username: localStorage.getItem('username'),
       isLoggedIn: localStorage.getItem('isLoggedIn') ? true : false,
-      isAdmin: localStorage.getItem('role') === 'admin',
-      isPremium: localStorage.getItem('role') === 'premium',
-      isNormal: localStorage.getItem('role') === 'normal',
+      role: localStorage.getItem('role'),
     };
+  },
+  computed: {
+    isAdmin() {
+      return this.role === 'admin';
+    },
+    isNormal() {
+      return this.role === 'normal';
+    },
+    isPremium() {
+      return this.role === 'premium';
+    },
   },
   methods: {
     logout() {
-      axios.post('http://localhost/api/logout').then(() => {
-        this.$router.push('/');
-        localStorage.clear();
-      });
+        axios.post('http://localhost/api/logout').then(() => {
+          window.location.reload();
+          this.$router.push('/');
+          localStorage.clear();
+        });
     },
   },
 };

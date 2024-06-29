@@ -11,31 +11,36 @@ class WishListController {
     }
 
     public function index() {
-        switch ($_SERVER['REQUEST_METHOD']) {
-            case 'GET':
-                if (isset($_GET['user_id']) && isset($_GET['game_id'])) {
-                    $wishList = $this->wishListService->getWishListByUserIdAndGameId(htmlspecialchars($_GET['user_id']), htmlspecialchars($_GET['game_id']));
-                    echo json_encode($wishList);
+        try {
+            switch ($_SERVER['REQUEST_METHOD']) {
+                case 'GET':
+                    if (isset($_GET['user_id']) && isset($_GET['game_id'])) {
+                        $wishList = $this->wishListService->getWishListByUserIdAndGameId(htmlspecialchars($_GET['user_id']), htmlspecialchars($_GET['game_id']));
+                        echo json_encode($wishList);
+                        break;
+                    } elseif (isset($_GET['user_id'])) {
+                        $wishList = $this->wishListService->getWishListByUserId(htmlspecialchars($_GET['user_id']));
+                        echo json_encode($wishList);
+                        break;
+                    } else {
+                        $wishList = $this->wishListService->getAll();
+                        echo json_encode($wishList);
+                        break;
+                    }
+                case 'POST':
+                    $data = json_decode(file_get_contents('php://input'));
+                    $this->addWishList($data);
                     break;
-                } elseif (isset($_GET['user_id'])) {
-                    $wishList = $this->wishListService->getWishListByUserId(htmlspecialchars($_GET['user_id']));
-                    echo json_encode($wishList);
+                case 'DELETE':
+                    $data = json_decode(file_get_contents('php://input'));
+                    $this->deleteWishList($data);
                     break;
-                } else {
-                    $wishList = $this->wishListService->getAll();
-                    echo json_encode($wishList);
+                default:
                     break;
-                }
-            case 'POST':
-                $data = json_decode(file_get_contents('php://input'));
-                $this->addWishList($data);
-                break;
-            case 'DELETE':
-                $data = json_decode(file_get_contents('php://input'));
-                $this->deleteWishList($data);
-                break;
-            default:
-                break;
+            }
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["message" => "Internal server error: " . $e->getMessage()]);
         }
     }
 

@@ -47,8 +47,6 @@ async function deleteData(path = '', data = {}) {
   }
 }
 
-
-
 async function fetchData(path = '') {
   try {
     const response = await fetch(api + path);

@@ -3,19 +3,25 @@ import Home from '../views/Home.vue'
 import NotFound from '../views/404NotFound.vue'
 import Login from '../views/Login.vue'
 import SignUp from '../views/SignUp.vue'
+import MyGames from '@/views/MyGames.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'Home',
       component: Home
     },
     {
       path: '/login',
       name: 'Login',
       component: Login
+    },
+    {
+      path: '/owned',
+      name: 'Owned',
+      component: MyGames
     },
     {
       path: '/signup',

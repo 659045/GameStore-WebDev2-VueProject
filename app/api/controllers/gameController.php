@@ -42,7 +42,7 @@ class GameController {
             }
         } catch(Exception $e) {
             http_response_code(500);
-            echo "Internal server error";
+            echo json_encode(["message" => "Internal server error: " . $e->getMessage()]);
         }
     }
 

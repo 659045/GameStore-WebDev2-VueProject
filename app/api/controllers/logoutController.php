@@ -7,11 +7,11 @@ class LogoutController
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 session_destroy();
                 http_response_code(200);
-                echo "Logged out";
+                echo json_encode(["message" => "Logged out successfully"]);
             }
         } catch (Exception $e) {
             http_response_code(500);
-            echo "Internal server error";
+            echo json_encode(["message" => "Internal server error: " . $e->getMessage()]);
         }
     }
 }
