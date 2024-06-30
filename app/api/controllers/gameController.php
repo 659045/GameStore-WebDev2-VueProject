@@ -14,10 +14,10 @@ class GameController {
             switch ($_SERVER["REQUEST_METHOD"]) {
                 case 'GET':
                     header("Content-type: application/json");
-                    if (isset($_GET['id'])) {
+                    if (!empty($_GET['id'])) {
                         $game = $this->gameService->getGameById(htmlspecialchars($_GET['id']));
                         echo json_encode($game);
-                    } elseif (isset($_GET['title'])) {
+                    } elseif (!empty($_GET['title'])) {
                         $game = $this->gameService->getGameByTitle(htmlspecialchars($_GET['title']));
                         echo json_encode($game);
                     } else {
@@ -26,15 +26,28 @@ class GameController {
                     }
                     break;
                 case 'POST':
-                    if (isset($_POST['id'])) {
-                       $this->editGame();
+                    if (empty($_POST['title']) || empty($_POST['description']) || !isset($_POST['price']) || empty($_FILES['image'])) {
+                        http_response_code(400);
+                        echo json_encode(["message" => "Fill in all fields"]);
+                        return;
+                    }
+
+                    if (!empty($_POST['id'])) {
+                        $this->editGame();  
                     } else {
                         $this->insertGame();
                     }
                     break;
                 case 'DELETE':
-                    $data = json_decode(file_get_contents('php://input'));
-                    $this->deleteGame(htmlspecialchars($data->id));
+                    $data = json_decode(file_get_contents('php://input'), true);
+
+                    if (empty($data) || empty($data['id'])) {
+                        http_response_code(400);
+                        echo json_encode(["message" => "Fill in all fields"]);
+                        return;
+                    }
+
+                    $this->deleteGame(htmlspecialchars($data['id']));
                     break;
                 default:
                     echo 'Error controller';
@@ -53,7 +66,7 @@ class GameController {
         $game->setPrice(htmlspecialchars($_POST['price']));
 
         $gameImage = $_FILES['image'];
-        if ($gameImage && $gameImage['error'] == 0) {
+        if (!empty($gameImage) && $gameImage['error'] == 0) {
             //add image to img folder
             $filename = htmlspecialchars($gameImage['name']);
             $destination = __DIR__ . '/../../public/img/' . $filename;

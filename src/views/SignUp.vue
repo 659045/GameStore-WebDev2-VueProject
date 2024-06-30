@@ -2,7 +2,7 @@
     <header>
         <NavBar />
     </header>
-    <div>
+    <div class="content-container">
       <form @submit.prevent="handleSignUp">
         <div class="form-group d-flex flex-column">
           <label for="email">Email address</label>
@@ -43,9 +43,11 @@ export default {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    email: this.email,
-                    username: this.username,
-                    password: this.password
+                    data: {
+                        email: this.email,
+                        username: this.username,
+                        password: this.password
+                    }
                 })
 
                 if (response.status === 201) {
@@ -69,6 +71,10 @@ export default {
 
     .form-control {
         margin-bottom: 10%;
+    }
+
+    .content-container {
+        height: 100vh;
     }
 
     .btn {

@@ -15,16 +15,16 @@ class LoginController {
     public function index() {
         try {
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                $input = json_decode(file_get_contents('php://input'), true);
+                $data = json_decode(file_get_contents('php://input'), true);
 
-                if (!isset($input['username']) || !isset($input['password'])) {
+                if (empty($data)) {
                     http_response_code(400);
                     echo json_encode(["message" => "Fill in all fields"]);
                     return;
                 }
 
-                $username = htmlspecialchars($input['username']);
-                $password = htmlspecialchars($input['password']);
+                $username = htmlspecialchars($data['username']);
+                $password = htmlspecialchars($data['password']);
 
                 if ($this->loginService->login($username, $password)) {
                     $user = $this->userService->getUserByUsername($username);

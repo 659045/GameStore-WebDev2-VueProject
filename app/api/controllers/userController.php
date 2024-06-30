@@ -26,11 +26,18 @@ class UserController {
                     }
                     break;
                 case "POST":
-                    $input = json_decode(file_get_contents('php://input'), true);
-                    if (isset($input['id']))
-                        $this->editUser($input);
-                    else
-                        $this->insertUser($input);
+                    $data = json_decode(file_get_contents('php://input'), true);
+                    if (empty($data)) {
+                        http_response_code(400);
+                        echo json_encode(["message" => "Fill in all fields"]);
+                        return;
+                    }
+
+                    if (isset($data['id'])) {
+                        $this->editUser($data);
+                    } else {
+                        $this->insertUser($data);
+                    }
                     break;
                 case "DELETE":
                     $data = json_decode(file_get_contents('php://input'));
@@ -45,14 +52,14 @@ class UserController {
         }
     }
 
-    public function insertUser($input) {
-        $result = $this->validateInputs($input['email'], $input['username'], $input['password']);
+    public function insertUser($data) {
+        $result = $this->validateInputs($data['email'], $data['username']);
 
         if ($result === true) {
             $user = new User();
-            $user->setEmail(htmlspecialchars($input['email']));
-            $user->setUsername(htmlspecialchars($input['username']));
-            $user->setPassword(password_hash(htmlspecialchars($input['password']), PASSWORD_DEFAULT));
+            $user->setEmail(htmlspecialchars($data['email']));
+            $user->setUsername(htmlspecialchars($data['username']));
+            $user->setPassword(password_hash(htmlspecialchars($data['password']), PASSWORD_DEFAULT));
             $user->setRole('normal');
     
             $this->userService->insert($user);
@@ -63,11 +70,11 @@ class UserController {
         }
     }
 
-    public function editUser($input) {
+    public function editUser($data) {
         $user = new User();
-        $user->setId(htmlspecialchars($input['id']));
-        $user->setEmail(htmlspecialchars($input['email']));
-        $user->setUsername(htmlspecialchars($input['username']));
+        $user->setId(htmlspecialchars($data['id']));
+        $user->setEmail(htmlspecialchars($data['email']));
+        $user->setUsername(htmlspecialchars($data['username']));
         
         $this->userService->edit($user);
         http_response_code(200);
@@ -78,11 +85,7 @@ class UserController {
         http_response_code(200);
     }
 
-    public function validateInputs($email, $username, $password) {
-        if (empty($email) || empty($username) || empty($password)) {
-            return 'Fill in all fields';
-        } 
-        
+    public function validateInputs($email, $username) {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return 'Invalid email';
         } 

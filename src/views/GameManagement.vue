@@ -27,13 +27,13 @@
                             <td v-if="successMessage" colspan="6"><label v-show="successMessage" class="text-center w-100 alert alert-success">{{ successMessage }}</label></td>
                         </transition>
                     </tr>
-                    <td><input type="text" v-bind="this.title" name="title" required></td>
+                    <td><input type="text" v-model="game.title" name="title" required></td>
     
-                    <td><input type="text" v-bind="this.description" name="description" required></td>
+                    <td><input type="text" v-model="game.description" name="description" required></td>
 
-                    <td><input type="float" v-bind="this.price" pattern="[0-9]+(\.[0-9]+)?" name="price" required></td>
+                    <td><input type="float" v-model="game.price" pattern="[0-9]+(\.[0-9]+)?" name="price" required></td>
 
-                    <td><input type="file" v-bind="this.image" name="image" accept="image/*"></td>
+                    <td><input type="file" @change="onFileChange" name="image" accept="image/*"></td>
 
                     <td colspan="2">
                         <button type="submit" class="btn btn-primary" @click="addGame()">Add Game</button>
@@ -68,10 +68,12 @@ export default {
     },
     data() {
         return {
-            title: '',
-            description: '',
-            price: '',
-            image: '',
+            game: {
+                title: '',
+                description: '',
+                price: 0.0,
+                image: null,
+            },
             games: [],
             errorMessage: '',
             successMessage: '',
@@ -90,14 +92,18 @@ export default {
     methods: {
         async addGame() {
             try {
-                const response = await axios.post('http://localhost/api/game', {
+                let formData = new FormData();
+                formData.append('title', this.game.title);
+                formData.append('description', this.game.description);
+                formData.append('price', this.game.price);
+                formData.append('image', this.game.image);
+
+                console.log(formData);
+                
+                const response = await axios.post('http://localhost/api/game', formData, {
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'multipart/form-data',
                     },
-                    title: this.title,
-                    description: this.description,
-                    price: this.price,
-                    image: this.image,
                 })
             
                 if (response.status === 201) {
@@ -115,45 +121,24 @@ export default {
             }
         
         },
-        async deleteGame(id) {
-            try {
-                const response = await axios.delete('http://localhost/api/game', {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    id: id,
-                })
-
-                if (response.status === 200) {
-                    this.games = this.games.filter((game) => game.id !== id);
-                    this.errorMessage = '';
-                    this.successMessage = 'Game deleted successfully';
-                    this.resetMessages();
-                } else {
-                    this.errorMessage = 'Error deleting game';
-                    this.resetMessages();
-                }
-            } catch (error) {
-                this.errorMessage = error.response.data.message;
-                this.resetMessages();
-            }
-        },
-        async editGame(id) {
+        async editGame(gameId) {
             try {
                 const response = axios.post('http://localhost/api/game?', {
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'multipart/form-data',
                     },
-                    id: id,
-                    title: this.title,
-                    description: this.description,
-                    price: this.price,
-                    image: this.image,
+                    data: {
+                        id: gameId,
+                        title: this.title,
+                        description: this.description,
+                        price: this.price,
+                        image: this.image,
+                    },
                 })
 
                 if (response.status === 200) {
                     this.games = this.games.map((game) => {
-                        if (game.id === id) {
+                        if (game.id === gameId) {
                             return response.data;
                         }
 
@@ -171,6 +156,34 @@ export default {
                 this.errorMessage = error.response.data.message;
                 this.resetMessages();
             }
+        },
+        async deleteGame(gameId) {
+            try {
+                const response = await axios.delete('http://localhost/api/game', {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    data: {
+                        id: gameId,
+                    },
+                })
+
+                if (response.status === 200) {
+                    this.games = this.games.filter((game) => game.id !== id);
+                    this.errorMessage = '';
+                    this.successMessage = 'Game deleted successfully';
+                    this.resetMessages();
+                } else {
+                    this.errorMessage = 'Error deleting game';
+                    this.resetMessages();
+                }
+            } catch (error) {
+                this.errorMessage = error.response.data.message;
+                this.resetMessages();
+            }
+        },
+        onFileChange(event) {       
+            this.game.image = event.target.files[0];
         },
         resetMessages() {
             setTimeout(() => {
