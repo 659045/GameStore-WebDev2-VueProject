@@ -38,10 +38,8 @@ export default {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    data: {
-                        username: this.username,
-                        password: this.password,
-                    },
+                    username: this.username,
+                    password: this.password,
                 });
 
                 if (response.status === 200) {

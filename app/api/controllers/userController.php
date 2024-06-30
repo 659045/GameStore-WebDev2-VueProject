@@ -27,7 +27,8 @@ class UserController {
                     break;
                 case "POST":
                     $data = json_decode(file_get_contents('php://input'), true);
-                    if (empty($data)) {
+
+                    if (empty($data['email']) || empty($data['username']) || empty($data['password'])) {
                         http_response_code(400);
                         echo json_encode(["message" => "Fill in all fields"]);
                         return;
@@ -71,13 +72,20 @@ class UserController {
     }
 
     public function editUser($data) {
-        $user = new User();
-        $user->setId(htmlspecialchars($data['id']));
-        $user->setEmail(htmlspecialchars($data['email']));
-        $user->setUsername(htmlspecialchars($data['username']));
-        
-        $this->userService->edit($user);
-        http_response_code(200);
+        $result = $this->validateInputs($data['email'], $data['username']);
+
+        if ($result === true) {
+            $user = new User();
+            $user->setId(htmlspecialchars($data['id']));
+            $user->setEmail(htmlspecialchars($data['email']));
+            $user->setUsername(htmlspecialchars($data['username']));
+            
+            $this->userService->edit($user);
+            http_response_code(200);
+        } else {
+            http_response_code(400);
+            echo json_encode(["message" => $result]);
+        }
     }
 
     public function deleteUser($id) {

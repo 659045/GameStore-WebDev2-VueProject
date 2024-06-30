@@ -98,8 +98,6 @@ export default {
                 formData.append('price', this.game.price);
                 formData.append('image', this.game.image);
 
-                console.log(formData);
-                
                 const response = await axios.post('http://localhost/api/game', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
@@ -123,16 +121,16 @@ export default {
         },
         async editGame(gameId) {
             try {
-                const response = axios.post('http://localhost/api/game?', {
+                let formData = new FormData();
+                formData.append('id', gameId);
+                formData.append('title', this.game.title);
+                formData.append('description', this.game.description);
+                formData.append('price', this.game.price);
+                formData.append('image', this.game.image);
+
+                const response = axios.post('http://localhost/api/game?', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
-                    },
-                    data: {
-                        id: gameId,
-                        title: this.title,
-                        description: this.description,
-                        price: this.price,
-                        image: this.image,
                     },
                 })
 

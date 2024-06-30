@@ -43,11 +43,9 @@ export default {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    data: {
-                        email: this.email,
-                        username: this.username,
-                        password: this.password
-                    }
+                    email: this.email,
+                    username: this.username,
+                    password: this.password
                 })
 
                 if (response.status === 201) {

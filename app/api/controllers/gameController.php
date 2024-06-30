@@ -41,7 +41,7 @@ class GameController {
                 case 'DELETE':
                     $data = json_decode(file_get_contents('php://input'), true);
 
-                    if (empty($data) || empty($data['id'])) {
+                    if (empty($data['id'])) {
                         http_response_code(400);
                         echo json_encode(["message" => "Fill in all fields"]);
                         return;
