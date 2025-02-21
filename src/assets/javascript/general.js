@@ -1,84 +1,84 @@
-const api = 'http://localhost/api';
+// const api = 'http://localhost/api';
 
-function delay(time) {
-  return new Promise((resolve) => setTimeout(resolve, time));
-}
+// function delay(time) {
+//   return new Promise((resolve) => setTimeout(resolve, time));
+// }
 
-async function postForm(path = '', form) {
-  try {
-    const response = await fetch(api + path, {
-      method: 'POST',
-      body: form,
-    });
+// async function postForm(path = '', form) {
+//   try {
+//     const response = await fetch(api + path, {
+//       method: 'POST',
+//       body: form,
+//     });
 
-    return response;
-  } catch(error) {
-    throw error;
-  }
-}
+//     return response;
+//   } catch(error) {
+//     throw error;
+//   }
+// }
 
-async function postData(path = '', data = {}) {
-  try {
-    const response = await fetch(api + path, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
+// async function postData(path = '', data = {}) {
+//   try {
+//     const response = await fetch(api + path, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(data),
+//     });
 
-  } catch(error) {
-    throw error;
-  }
-}
+//   } catch(error) {
+//     throw error;
+//   }
+// }
 
-async function deleteData(path = '', data = {}) {
-  try {
-    const response = await fetch(api + path, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
+// async function deleteData(path = '', data = {}) {
+//   try {
+//     const response = await fetch(api + path, {
+//       method: 'DELETE',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(data),
+//     });
 
-  } catch(error) {
-    throw error;
-  }
-}
+//   } catch(error) {
+//     throw error;
+//   }
+// }
 
-async function fetchData(path = '') {
-  try {
-    const response = await fetch(api + path);
-    return await response.json();
-  } catch(error) {
-    throw error
-  }
-}
+// async function fetchData(path = '') {
+//   try {
+//     const response = await fetch(api + path);
+//     return await response.json();
+//   } catch(error) {
+//     throw error
+//   }
+// }
 
-function showErrorMessage(message, label) {
-  label.classList.remove('warning', 'fade-out');
-  label.classList.add('warning');
-  label.innerHTML = message;
+// function showErrorMessage(message, label) {
+//   label.classList.remove('warning', 'fade-out');
+//   label.classList.add('warning');
+//   label.innerHTML = message;
 
-  setTimeout(() => {
-    label.classList.add('fade-out');
-    label.innerHTML = '';
-  }, 3000);
+//   setTimeout(() => {
+//     label.classList.add('fade-out');
+//     label.innerHTML = '';
+//   }, 3000);
 
-  return label;
-}
+//   return label;
+// }
 
-function showSuccessMessage(message, label) {
-  label.classList.remove('success', 'fade-out');
-  label.classList.add('success');
-  label.innerHTML = message;
+// function showSuccessMessage(message, label) {
+//   label.classList.remove('success', 'fade-out');
+//   label.classList.add('success');
+//   label.innerHTML = message;
 
-  setTimeout(() => {
-    label.classList.add('fade-out');
-    label.innerHTML = '';
-  }, 3000);
+//   setTimeout(() => {
+//     label.classList.add('fade-out');
+//     label.innerHTML = '';
+//   }, 3000);
 
-  return label;
-}
+//   return label;
+// }
 

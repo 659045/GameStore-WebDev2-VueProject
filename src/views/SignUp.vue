@@ -6,7 +6,7 @@
       <form @submit.prevent="handleSignUp">
         <div class="form-group d-flex flex-column">
           <label for="email">Email address</label>
-          <input type="email" class="form-control" v-model="email" placeholder="Enter email" autocomplete="on" required>
+          <input type="email" class="form-control" v-model="email" placeholder="Enter email" required>
           <label for="username">Username</label>
           <input type="text" class="form-control" v-model="username" placeholder="Enter username" required>
           <label for="password">Password</label>
