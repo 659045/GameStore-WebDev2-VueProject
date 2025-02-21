@@ -28,7 +28,7 @@ class GameController {
                 case 'POST':
                     if (empty($_POST['title']) || empty($_POST['description']) || !isset($_POST['price']) || empty($_FILES['image'])) {
                         http_response_code(400);
-                        echo json_encode(["message" => "Fill in all fields"]);
+                        echo json_encode(["message" => $POST['title'], "description" => $_POST['description'], "price" => $_POST['price'], "image" => $_FILES['image']]);
                         return;
                     }
 
@@ -76,6 +76,7 @@ class GameController {
         }
 
         $this->gameService->insert($game);
+        http_response_code(201);
     }
 
     function editGame() {

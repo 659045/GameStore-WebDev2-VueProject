@@ -19,6 +19,11 @@
               Add to cart
             </button>
           </template>
+          <template v-else>
+            <button @click="route('/login')" class="btn btn-primary w-50 ml-auto add-to-cart-button">
+              Buy
+            </button>
+          </template>
           <label :id="'labelError' + game.id" class="p-2 mt-2 ml-auto label"></label>
         </div>
       </div>
@@ -69,6 +74,9 @@
         const data = { id: gameId };
   
         
+      },
+      route(path) {
+        this.$router.push(path);
       }
     }
   };

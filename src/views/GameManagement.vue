@@ -40,15 +40,26 @@
                     </td>
                     
                     <tr v-for="game in games" :key="game.id">
-                        <td>{{ game.title }}</td>
-                        <td>{{ game.description }}</td>
-                        <td>{{ game.price }}</td>
-                        <td>{{ game.image }}</td>
+                        <td :contenteditable="selectedGameId === game.id">{{ game.title }}</td>
+                        <td :contenteditable="selectedGameId === game.id">{{ game.description }}</td>
+                        <td :contenteditable="selectedGameId === game.id">{{ game.price }}</td>
+                        <td v-if="selectedGameId === game.id"><input type="file" @change="onFileChange" name="image" accept="image/*"></td>
+                        <td v-else>{{ game.image }}</td>
                         <td>
-                            <button class="btn btn-primary" @click="editGame(game.id)">Edit</button>
+                            <button 
+                                class="btn btn-fixed-size" 
+                                :class="selectedGameId === game.id ? 'btn-danger' : 'btn-primary'" 
+                                @click="toggleEditMode(game.id)">
+                                {{ selectedGameId === game.id ? 'Cancel' : 'Edit' }}
+                            </button>
                         </td>
                         <td>
-                            <button class="btn btn-danger" @click="deleteGame(game.id)">Delete</button>
+                            <button 
+                                class="btn btn-fixed-size" 
+                                :class="selectedGameId === game.id ? 'btn-success' : 'btn-danger'" 
+                                @click="selectedGameId === game.id ? editGame() : deleteGame(game.id)">
+                                {{ selectedGameId === game.id ? 'Confirm' : 'Delete' }}
+                            </button>
                         </td>
                     </tr>
                 </tbody>
@@ -69,25 +80,20 @@ export default {
     data() {
         return {
             game: {
+                id: 0,
                 title: '',
                 description: '',
                 price: 0.0,
                 image: null,
             },
             games: [],
+            selectedGameId: null,
             errorMessage: '',
             successMessage: '',
         };
     },
     mounted() {
-        try {
-            axios.get('http://localhost/api/game').then((response) => {
-                this.games = response.data;
-            });
-        } catch (error) {
-            this.errorMessage = 'Error fetching games';
-            this.resetMessages();
-        }
+        this.fetchGames();
     },
     methods: {
         async addGame() {
@@ -108,6 +114,8 @@ export default {
                     this.games.push(response.data);
                     this.errorMessage = '';
                     this.successMessage = 'Game added successfully';
+                    this.clearInputFields();
+                    this.fetchGames();
                     this.resetMessages();
                 } else {
                     this.errorMessage = 'Error adding game';
@@ -119,33 +127,26 @@ export default {
             }
         
         },
-        async editGame(gameId) {
+        async editGame() {
             try {
                 let formData = new FormData();
-                formData.append('id', gameId);
+                formData.append('id', this.game.id);
                 formData.append('title', this.game.title);
                 formData.append('description', this.game.description);
                 formData.append('price', this.game.price);
                 formData.append('image', this.game.image);
 
-                const response = axios.post('http://localhost/api/game?', formData, {
+                const response = axios.post('http://localhost/api/game', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
                 })
 
                 if (response.status === 200) {
-                    this.games = this.games.map((game) => {
-                        if (game.id === gameId) {
-                            return response.data;
-                        }
-
-                        return game;
-                    });
-                    
                     this.errorMessage = '';
                     this.successMessage = 'Game edited successfully';
                     this.resetMessages();
+
                 } else {
                     this.errorMessage = 'Error editing game';
                     this.resetMessages();
@@ -167,7 +168,7 @@ export default {
                 })
 
                 if (response.status === 200) {
-                    this.games = this.games.filter((game) => game.id !== id);
+                    this.fetchGames();
                     this.errorMessage = '';
                     this.successMessage = 'Game deleted successfully';
                     this.resetMessages();
@@ -189,6 +190,30 @@ export default {
                 this.successMessage = '';
             }, 3000);
         },
+        fetchGames() {
+            try {
+                axios.get('http://localhost/api/game').then((response) => {
+                    this.games = response.data;
+                });
+            } catch (error) {
+                this.errorMessage = 'Error fetching games';
+                this.resetMessages();
+            }
+        },
+        clearInputFields() {
+            this.game.title = '';
+            this.game.description = '';
+            this.game.price = 0;
+
+            document.querySelector('input[name="image"]').value = "";
+        },
+        toggleEditMode(gameId) {
+            if (this.selectedGameId === gameId) {
+                this.selectedGameId = null; // Deselect if already selected
+            } else {
+                this.selectedGameId = gameId; // Select the game to edit
+            }
+        },
     },
 };
 
@@ -208,5 +233,9 @@ export default {
 
 .alert {
     transition: opacity 1s ease-in-out;
+}
+
+.btn-fixed-size {
+    width: 100px;
 }
 </style>
