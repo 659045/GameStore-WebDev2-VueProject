@@ -43,11 +43,11 @@ export default {
                 });
 
                 if (response.status === 200) {
-                    this.$router.push('/');
-                    localStorage.setItem('isLoggedIn', true);
                     localStorage.setItem('user_id', response.data.user_id);
                     localStorage.setItem('username', this.username);
                     localStorage.setItem('role', response.data.role);
+                    localStorage.setItem('isLoggedIn', true);
+                    this.$router.push('/');
                 } else {
                     this.errorMessage = 'Invalid username or password';
                 }

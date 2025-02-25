@@ -72,13 +72,14 @@ class UserController {
     }
 
     public function editUser($data) {
-        $result = $this->validateInputs($data['email'], $data['username']);
+        $result = $this->validateEditInputs($data['id'], $data['email'], $data['username']);
 
         if ($result === true) {
             $user = new User();
             $user->setId(htmlspecialchars($data['id']));
             $user->setEmail(htmlspecialchars($data['email']));
             $user->setUsername(htmlspecialchars($data['username']));
+            $user->setPassword(password_hash(htmlspecialchars($data['password']), PASSWORD_DEFAULT));
             
             $this->userService->edit($user);
             http_response_code(200);
@@ -103,6 +104,22 @@ class UserController {
         } 
         
         if ($this->userService->getUserByUsername(htmlspecialchars($username))) {
+            return 'Username already exists';
+        } 
+        
+        return true;
+    }
+
+    public function validateEditInputs($id, $email, $username) {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return 'Invalid email';
+        } 
+        
+        if ($this->userService->getUserByEmail(htmlspecialchars($email)) && $this->userService->getUserByEmail(htmlspecialchars($email))->getId() !== $id) {
+            return 'Email already exists';
+        } 
+        
+        if ($this->userService->getUserByUsername(htmlspecialchars($username)) && $this->userService->getUserByUsername(htmlspecialchars($username))->getId() !== $id) {
             return 'Username already exists';
         } 
         

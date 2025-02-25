@@ -7,18 +7,16 @@
         <div>
             <h1>User Details</h1>
             <div class="form-group d-flex flex-column">
-                <label for="email">Email address</label>
+                <label for="email">Email</label>
                 <input type="email" class="form-control" v-model="user.email" placeholder="Enter email" required>
                 <label for="username">Username</label>
                 <input type="text" class="form-control" v-model="user.username" placeholder="Enter username" required>
                 <label for="password">Password</label>
-                <input type="password" class="form-control" v-model="user.password" placeholder="Password" required>
-                <label v-show="errorMessage" class="mx-auto alert alert-danger">{{ errorMessage }}</label>
-                <div>
-                    <button v-if="editMode" class="btn btn-danger mt-3 mr-3">Cancel</button>
-                    <button v-if="editMode" class="btn btn-success mt-3 mx-auto" @click="editUser()">Confirm</button>
-                    <button v-else class="btn btn-primary mt-3 mx-auto" @click="editUser()">Edit</button>
-                </div>
+                <input type="password" class="form-control" v-model="password" placeholder="Enter Password" required>
+                <label v-show="errorMessage" class="text-center w-100 alert alert-danger">{{ errorMessage }}</label>     
+                <label v-show="successMessage" class="text-center w-100 alert alert-success">{{ successMessage }}</label>
+                <button class="btn btn-primary mt-3 mx-auto" @click="editUser()">Edit</button>
+                <button class="btn btn-danger mt-5 mb-3 mx-auto" @click="deleteUser()">Delete Account</button>
             </div>
         </div>
     </div>
@@ -35,36 +33,86 @@ export default {
     },
     data() {
         return {
-        editMode: false,
         user: {
             id: null,
             username: '',
             email: '',
             password: ''
-        }
+        },
+        errorMessage: '',
+        successMessage: '',
+        password: ''
       };
     },
     mounted() {
-
+        this.getUser();
+        console.log(this.user.id);
     },
     methods: {
-        editUser() {
+        async getUser() {
             try {
-                const response = axios.post('http://localhost/api/user', {
+                const response = await axios.get('http://localhost/api/user', {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    id: this.id,
-                    email: this.email,
-                    username: this.username,
+                    params: {
+                        username: localStorage.getItem('username')
+                    }
+                })
+
+                if (response.status === 200) {
+                    this.user = response.data;
+                } else {
+                    this.errorMessage = 'Error getting user';
+                    this.resetMessages();
+                } 
+            } catch (error) {
+                this.errorMessage = error.response.data.message;
+            }
+        },
+         async editUser() {
+            try {
+                const response = await axios.post('http://localhost/api/user', {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    id: this.user.id,
+                    email: this.user.email,
+                    username: this.user.username,
                     password: this.password
                 })
 
-                if (response.status === 201) {
+                if (response.status === 200) {
                     this.errorMessage = '';
                     this.successMessage = 'User edited successfully';
+                    this.resetMessages();
                 } else {
                     this.errorMessage = 'Error editing user';
+                    this.resetMessages();
+                } 
+            } catch (error) {
+                this.errorMessage = error.response.data.message;
+            }
+        },
+        async deleteUser() {
+            try {
+                const response = await axios.delete('http://localhost/api/user', {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    data: {
+                        id: this.user.id
+                    }
+                })
+
+                if (response.status === 200) {
+                    axios.post('http://localhost/api/logout').then(() => {
+                        localStorage.clear();
+                        window.location.href = '/';
+                    });
+                } else {
+                    this.errorMessage = 'Error deleting user';
+                    this.resetMessages();
                 } 
             } catch (error) {
                 this.errorMessage = error.response.data.message;
@@ -111,6 +159,6 @@ export default {
 }
 
 .btn {
-    width: 30%;
+    width: 40%;
 }
 </style>

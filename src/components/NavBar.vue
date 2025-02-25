@@ -49,9 +49,8 @@ export default {
   methods: {
     logout() {
         axios.post('http://localhost/api/logout').then(() => {
-          window.location.reload();
-          this.$router.push('/');
           localStorage.clear();
+          window.location.href = '/';
         });
     },
   },

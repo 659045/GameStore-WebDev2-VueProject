@@ -27,11 +27,11 @@
                             <td v-if="successMessage" colspan="6"><label v-show="successMessage" class="text-center w-100 alert alert-success">{{ successMessage }}</label></td>
                         </transition>
                     </tr>
-                    <td><input type="text" v-model="game.title" name="title" required></td>
+                    <td><input type="text" v-model="this.game.title" name="title" required></td>
     
-                    <td><input type="text" v-model="game.description" name="description" required></td>
+                    <td><input type="text" v-model="this.game.description" name="description" required></td>
 
-                    <td><input type="float" v-model="game.price" pattern="[0-9]+(\.[0-9]+)?" name="price" required></td>
+                    <td><input type="float" v-model="this.game.price" pattern="[0-9]+(\.[0-9]+)?" name="price" required></td>
 
                     <td><input type="file" @change="onFileChange" name="image" accept="image/*"></td>
 
@@ -40,10 +40,13 @@
                     </td>
                     
                     <tr v-for="game in games" :key="game.id">
-                        <td :contenteditable="selectedGameId === game.id">{{ game.title }}</td>
-                        <td :contenteditable="selectedGameId === game.id">{{ game.description }}</td>
-                        <td :contenteditable="selectedGameId === game.id">{{ game.price }}</td>
-                        <td v-if="selectedGameId === game.id"><input type="file" @change="onFileChange" name="image" accept="image/*"></td>
+                        <td v-if="selectedGameId === game.id"><input type="text" v-model="this.selectedGame.title" name="title" required></td>
+                        <td v-else>{{ game.title }}</td>
+                        <td v-if="selectedGameId === game.id"><input type="text" v-model="this.selectedGame.description" name="description" required></td>
+                        <td v-else>{{ game.description }}</td>
+                        <td v-if="selectedGameId === game.id"><input type="float" v-model="this.selectedGame.price" pattern="[0-9]+(\.[0-9]+)?" name="price" required></td>
+                        <td v-else>{{ game.price }}</td>
+                        <td v-if="selectedGameId === game.id"><input type="file" @change="onEditFileChange" name="image" accept="image/*"></td>
                         <td v-else>{{ game.image }}</td>
                         <td>
                             <button 
@@ -86,10 +89,18 @@ export default {
                 price: 0.0,
                 image: null,
             },
+            selectedGame: {
+                id: 0,
+                title: '',
+                description: '',
+                price: 0.0,
+                image: null,
+            },
             games: [],
             selectedGameId: null,
             errorMessage: '',
             successMessage: '',
+            test: null
         };
     },
     mounted() {
@@ -107,7 +118,7 @@ export default {
                 const response = await axios.post('http://localhost/api/game', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
-                    },
+                    }
                 })
             
                 if (response.status === 201) {
@@ -130,23 +141,24 @@ export default {
         async editGame() {
             try {
                 let formData = new FormData();
-                formData.append('id', this.game.id);
-                formData.append('title', this.game.title);
-                formData.append('description', this.game.description);
-                formData.append('price', this.game.price);
-                formData.append('image', this.game.image);
+                formData.append('id', this.selectedGameId);
+                formData.append('title', this.selectedGame.title);
+                formData.append('description', this.selectedGame.description);
+                formData.append('price', this.selectedGame.price);
+                formData.append('image', this.selectedGame.image);
 
-                const response = axios.post('http://localhost/api/game', formData, {
+                const response = await axios.post('http://localhost/api/game', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
-                    },
+                    }
                 })
 
                 if (response.status === 200) {
                     this.errorMessage = '';
                     this.successMessage = 'Game edited successfully';
+                    this.selectedGameId = null;
+                    this.fetchGames();
                     this.resetMessages();
-
                 } else {
                     this.errorMessage = 'Error editing game';
                     this.resetMessages();
@@ -184,6 +196,9 @@ export default {
         onFileChange(event) {       
             this.game.image = event.target.files[0];
         },
+        onEditFileChange(event) {
+            this.selectedGame.image = event.target.files[0];
+        },
         resetMessages() {
             setTimeout(() => {
                 this.errorMessage = '';
@@ -209,9 +224,10 @@ export default {
         },
         toggleEditMode(gameId) {
             if (this.selectedGameId === gameId) {
-                this.selectedGameId = null; // Deselect if already selected
+                this.selectedGameId = null;
             } else {
-                this.selectedGameId = gameId; // Select the game to edit
+                this.selectedGameId = gameId;
+                this.selectedGame = this.games.find(game => game.id === gameId);
             }
         },
     },
