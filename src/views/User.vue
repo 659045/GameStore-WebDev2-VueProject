@@ -7,8 +7,6 @@
         <div>
             <h1>User Details</h1>
             <div class="form-group d-flex flex-column">
-                <label for="email">Email</label>
-                <input type="email" class="form-control" v-model="user.email" placeholder="Enter email" required>
                 <label for="username">Username</label>
                 <input type="text" class="form-control" v-model="user.username" placeholder="Enter username" required>
                 <label for="password">Password</label>
@@ -36,7 +34,6 @@ export default {
         user: {
             id: null,
             username: '',
-            email: '',
             password: ''
         },
         errorMessage: '',
@@ -46,7 +43,6 @@ export default {
     },
     mounted() {
         this.getUser();
-        console.log(this.user.id);
     },
     methods: {
         async getUser() {
@@ -77,7 +73,6 @@ export default {
                         'Content-Type': 'application/json'
                     },
                     id: this.user.id,
-                    email: this.user.email,
                     username: this.user.username,
                     password: this.password
                 })

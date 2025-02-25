@@ -16,14 +16,6 @@ class User implements JsonSerializable {
         $this->id = $id;
     }
 
-    public function getEmail(): string {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): void {
-        $this->email = $email;
-    }
-
     public function getUsername(): string {
         return $this->username;
     }
@@ -51,7 +43,6 @@ class User implements JsonSerializable {
     public function jsonSerialize(): mixed {
         return [
             'id' => $this->id,
-            'email' => $this->email,
             'username' => $this->username,
             'password' => $this->password,
             'role' => $this->role,

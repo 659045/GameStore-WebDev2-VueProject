@@ -12,11 +12,6 @@ class UserService {
         return $repository->getUserByUsername($username);
     }
 
-    public function getUserByEmail($email) {
-        $repository = new UserRepository();
-        return $repository->getUserByEmail($email);
-    }
-
     public function insert($user) {
         $repository = new UserRepository();
         return $repository->insert($user);

@@ -3,19 +3,18 @@
         <NavBar />
     </header>
     <div class="content-container">
-      <form @submit.prevent="handleSignUp">
-        <div class="form-group d-flex flex-column">
-          <label for="email">Email address</label>
-          <input type="email" class="form-control" v-model="email" placeholder="Enter email" required>
-          <label for="username">Username</label>
-          <input type="text" class="form-control" v-model="username" placeholder="Enter username" required>
-          <label for="password">Password</label>
-          <input type="password" class="form-control" v-model="password" placeholder="Password" required>
-          <label v-show="errorMessage" class="mx-auto alert alert-danger">{{ errorMessage }}</label>
-          <a href="/login" class="mx-auto"><small>Already have an account?</small></a>
-          <button type="submit" class="btn btn-primary mt-3 mx-auto">Sign Up</button>
-        </div>
-      </form>
+        <form @submit.prevent="handleSignUp">
+            <div class="form-group d-flex flex-column">
+                <h1 class="text-center">Sign Up</h1>
+                <label for="username">Username</label>
+                <input type="text" class="form-control" v-model="username" placeholder="Enter username" required>
+                <label for="password">Password</label>
+                <input type="password" class="form-control" v-model="password" placeholder="Password" required>
+                <label v-show="errorMessage" class="mx-auto alert alert-danger">{{ errorMessage }}</label>
+                <a href="/login" class="mx-auto"><small>Already have an account?</small></a>
+                <button type="submit" class="btn btn-primary mt-3 mx-auto">Sign Up</button>
+            </div>
+        </form>
     </div>
   </template>
   
@@ -30,7 +29,6 @@ export default {
     },
     data() {
         return {
-            email: '',
             username: '',
             password: '',
             errorMessage: ''
@@ -43,7 +41,6 @@ export default {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    email: this.email,
                     username: this.username,
                     password: this.password
                 })

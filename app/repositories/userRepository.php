@@ -6,7 +6,7 @@ class UserRepository extends Repository {
 
     public function getAll() {
         try {
-            $stmt = $this->connection->prepare("SELECT id, email, username, password, role FROM user");
+            $stmt = $this->connection->prepare("SELECT id, username, password, role FROM user");
             $stmt->execute();
     
             $stmt->setFetchMode(PDO::FETCH_CLASS, 'User');
@@ -20,22 +20,8 @@ class UserRepository extends Repository {
 
     public function getUserByUsername($username) {
         try {
-            $stmt = $this->connection->prepare("SELECT id, email, username, password, role FROM user WHERE username = :username");
+            $stmt = $this->connection->prepare("SELECT id, username, password, role FROM user WHERE username = :username");
             $stmt->execute(array(':username' => $username));
-    
-            $stmt->setFetchMode(PDO::FETCH_CLASS, 'User');
-            $user = $stmt->fetch();
-    
-            return $user;
-        } catch (PDOException $e) {
-            echo $e;	
-        }
-    }
-
-    public function getUserByEmail($email) {
-        try {
-            $stmt = $this->connection->prepare("SELECT id, email, username, password, role FROM user WHERE email = :email");
-            $stmt->execute(array(':email' => $email));
     
             $stmt->setFetchMode(PDO::FETCH_CLASS, 'User');
             $user = $stmt->fetch();
@@ -49,11 +35,10 @@ class UserRepository extends Repository {
     public function insert($user) {
         try {
             $stmt = $this->connection->prepare(
-                "INSERT INTO user (email, username, password, role) VALUES (:email, :username, :password, :role)"
+                "INSERT INTO user (username, password, role) VALUES (:username, :password, :role)"
             );
             
             $results = $stmt->execute([
-                ':email' => $user->getEmail(), 
                 ':username' => $user->getUsername(), 
                 ':password' => $user->getPassword(),
                 ':role' => $user->getRole()
@@ -68,11 +53,10 @@ class UserRepository extends Repository {
     public function edit($user) {
         try {
             $stmt = $this->connection->prepare(
-                "UPDATE user SET email = :email, username = :username, password = :password WHERE id = :id"
+                "UPDATE user SET username = :username, password = :password WHERE id = :id"
             );
             
             $results = $stmt->execute([
-                ':email' => $user->getEmail(), 
                 ':username' => $user->getUsername(), 
                 ':password' => $user->getPassword(),
                 ':id' => $user->getId()

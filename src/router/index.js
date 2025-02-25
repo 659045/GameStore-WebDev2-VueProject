@@ -8,6 +8,7 @@ import GameManagement from '@/views/GameManagement.vue'
 import User from '@/views/User.vue'
 import Wishlist from '@/views/Wishlist.vue'
 import Cart from '@/views/Cart.vue'
+import Upgrade from '@/views/Upgrade.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -51,6 +52,11 @@ const router = createRouter({
       path: '/cart',
       name: 'Cart',
       component: Cart
+    },
+    {
+      path: '/user/upgrade',
+      name: 'Upgrade',
+      component: Upgrade
     },
     {
       path: '/404',

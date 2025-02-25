@@ -4,6 +4,7 @@
     </header>
     <div class="content-container">
         <form @submit.prevent="handleLogin" class="form-group d-flex flex-column">
+            <h1 class="text-center">Login</h1>
             <label for="username">Username</label>
             <input type="text" class="form-control" v-model="username" placeholder="Username" required>
             <label for="password">Password</label>
