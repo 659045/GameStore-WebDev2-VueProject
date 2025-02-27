@@ -12,7 +12,12 @@ class UpgradeController {
     public function index() {
         try {
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                $this->upgrade();
+                header("Content-type: application/json");
+                if (isset($_POST['id'])) {
+                    $this->upgrade();
+                } else {
+                    http_response_code(400);
+                }
             }
         } catch (Exception $e) {
             http_response_code(500);

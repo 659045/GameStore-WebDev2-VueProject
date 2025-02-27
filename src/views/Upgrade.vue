@@ -8,13 +8,14 @@
         <h2>Get Wish list feature</h2>
 
         <div class="mt-5">
-            <div class="form-group d-flex flex-column">
-                <input type="hidden" class="form-control" id="idInput" name="id" value="<? echo $user->getId(); ?>">
+            <div class="d-flex flex-column">
                 <h2 class="mx-auto">Only €9.99!! One time payment!!</h2>
-                <button id="upgradeButton" class="btn btn-primary mt-3 mx-auto" @click="upgradeUser">Upgrade to premium</button>
-                <label v-show="errorMessage" class="text-center w-100 alert alert-danger">{{ errorMessage }}</label>     
-                <label v-show="successMessage" class="text-center w-100 alert alert-success">{{ successMessage }}</label>
-            </div>
+                <button v-if="!upgradeSuccess" class="btn btn-primary mt-3 mb-3 mx-auto" @click="upgradeUser">Upgrade to premium</button>
+                <button v-else class="btn btn-primary mt-3 mb-3 mx-auto" @click="backToHome">Back to Home</button>
+                <label v-show="errorMessage" class="text-center w-25 mx-auto alert alert-danger">{{ errorMessage }}</label>     
+                <label v-show="successMessage" class="text-center w-25 alert mx-auto alert-success">{{ successMessage }}</label>
+                
+            </div>     
         </div>
     </div>
 </template>
@@ -32,6 +33,7 @@ export default {
         return {
             errorMessage: '',
             successMessage: '',
+            upgradeSuccess: false,
         };
     },
     methods: {
@@ -43,17 +45,20 @@ export default {
         },
         async upgradeUser() {
             try {
-                const response = await axios.post('http://localhost/api/upgrade', {
+                let formData = new FormData();
+                formData.append('id', localStorage.getItem('user_id'));
+
+                const response = await axios.post('http://localhost/api/upgrade', formData, {
                     headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    id: localStorage.getItem('user_id'),
+                        'Content-Type': 'multipart/form-data',
+                    }
                 })
 
                 if (response.status === 200) {
-                    this.fetchGames();
                     this.errorMessage = '';
                     this.successMessage = 'User successfully upgraded to premium';
+                    localStorage.setItem('role', 'premium');
+                    this.upgradeSuccess = true;
                     this.resetMessages();
                 } else {
                     this.errorMessage = 'Error fail to upgrade premium';
@@ -65,6 +70,9 @@ export default {
                 this.resetMessages();
             }
         },
+        backToHome() {
+            this.$router.push('/');
+        }
     }
 };
 </script>
