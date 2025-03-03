@@ -5,13 +5,9 @@ require __DIR__ . '/../../services/authService.php';
 
 class LoginController {
 
-    private $loginService;
-    private $userService;
     private $authService;
 
     function __construct() {
-        $this->loginService = new LoginService();
-        $this->userService = new UserService();
         $this->authService = new AuthService();
     }
 
@@ -30,7 +26,8 @@ class LoginController {
                 $password = htmlspecialchars($data['password']);
 
                 $result = $this->authService->authenticate($username, $password);
-                if ($result) {
+                
+                if ($result !== false) {
                     http_response_code(200);
                     echo json_encode(["token" => $result]);
                 } else {

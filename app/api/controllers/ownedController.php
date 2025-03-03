@@ -1,6 +1,6 @@
 <?php
 require __DIR__ . '/../../services/ownedGameService.php';
-require_once __DIR__ . '/../../services/cartService.php';
+require __DIR__ . '/../../services/cartService.php';
 
 class OwnedController {
 

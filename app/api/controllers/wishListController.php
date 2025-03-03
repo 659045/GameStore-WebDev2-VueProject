@@ -1,6 +1,6 @@
 <?php
 require __DIR__ . '/../../services/wishListService.php';
-require_once __DIR__ . '/../../models/wishList.php';
+require __DIR__ . '/../../models/wishList.php';
 
 class WishListController {
 

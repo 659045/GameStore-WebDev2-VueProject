@@ -45,7 +45,7 @@ export default {
 
                 if (response.status === 200) {
                     localStorage.setItem('user_id', response.data.user_id);
-                    localStorage.setItem('username', this.username);
+                    localStorage.setItem('username', response.data.username);
                     localStorage.setItem('role', response.data.role);
                     localStorage.setItem('isLoggedIn', true);
                     this.$router.push('/');

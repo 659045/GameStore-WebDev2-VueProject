@@ -1,7 +1,7 @@
 <?php 
 
 require_once __DIR__ . '/loginService.php';
-require_once __DIR__ . '/../config/secret.php';
+require_once __DIR__ . '/../../vendor/autoload.php'; 
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -12,12 +12,12 @@ class AuthService {
     private $loginService;
 
     public function __construct() {
-        $this->secretKey = $JWT_SECRET_KEY;
+        $this->secretKey = require __DIR__ . '/../config/secret.php';
         $this->loginService = new LoginService();
     }
 
     public function authenticate($username, $password) {
-        $user = $this->$loginService->login($username, $password);
+        $user = $this->loginService->login($username, $password);
 
         if ($user) {
             $issuedAt = time();
@@ -36,7 +36,7 @@ class AuthService {
 
     public function validateToken($token) {
         try {
-            $decoded = JWT::decode($token, $this->secretKey, array('HS256'));
+            $decoded = JWT::decode($token, new Key($this->secretKey, 'HS256'));
             return $decoded;
         } catch (Exception $e) {
             return false;
