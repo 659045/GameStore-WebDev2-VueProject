@@ -1,15 +1,18 @@
 <?php
 require __DIR__ . '/../../services/loginService.php';
 require __DIR__ . '/../../services/userService.php';
+require __DIR__ . '/../../services/authService.php';
 
 class LoginController {
 
     private $loginService;
     private $userService;
+    private $authService;
 
     function __construct() {
         $this->loginService = new LoginService();
         $this->userService = new UserService();
+        $this->authService = new AuthService();
     }
 
     public function index() {
@@ -26,14 +29,10 @@ class LoginController {
                 $username = htmlspecialchars($data['username']);
                 $password = htmlspecialchars($data['password']);
 
-                if ($this->loginService->login($username, $password)) {
-                    $user = $this->userService->getUserByUsername($username);
-                    
+                $result = $this->authService->authenticate($username, $password);
+                if ($result) {
                     http_response_code(200);
-                    echo json_encode([
-                        "user_id" => $user->getId(),
-                        "role" => $user->getRole(),
-                    ]);
+                    echo json_encode(["token" => $result]);
                 } else {
                     http_response_code(401);
                     echo json_encode(["message" => "Invalid username or password"]);
