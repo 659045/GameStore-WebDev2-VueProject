@@ -1,7 +1,6 @@
 <?php 
 
 require_once __DIR__ . '/loginService.php';
-require_once __DIR__ . '/../../vendor/autoload.php'; 
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -29,6 +28,7 @@ class AuthService {
                 'iat' => $issuedAt,
                 'exp' => $expirationTime
             ];
+            
             return JWT::encode($payload, $this->secretKey, 'HS256');
         }
         return false;
