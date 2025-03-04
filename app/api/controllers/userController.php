@@ -14,14 +14,11 @@ class UserController {
 
     public function index() {
         try {
-
             $headers = apache_request_headers();
             $authorizationHeader = $headers['Authorization'] ?? '';
 
             if ($_SERVER["REQUEST_METHOD"] !== 'POST' && empty($authorizationHeader)) {
-                http_response_code(401);
-                echo json_encode(["message" => "Authorization token is missing"]);
-                return;
+                $this->sendUnauthorizedResponse("Authorization token is missing");
             }
 
             $token = str_replace('Bearer ', '', $authorizationHeader);
@@ -30,9 +27,7 @@ class UserController {
             switch ($_SERVER["REQUEST_METHOD"]) {
                 case "GET":
                     if (!$decoded) {
-                        http_response_code(401);
-                        echo json_encode(["message" => "Invalid token"]);
-                        return;
+                        $this->sendUnauthorizedResponse("Invalid token");
                     }
 
                     header("Content-type: application/json");
@@ -61,9 +56,7 @@ class UserController {
                     break;
                 case "DELETE":
                     if (!$decoded) {
-                        http_response_code(401);
-                        echo json_encode(["message" => "Invalid token"]);
-                        return;
+                        $this->sendUnauthorizedResponse("Invalid token");
                     }
 
                     $data = json_decode(file_get_contents('php://input'));
@@ -78,7 +71,7 @@ class UserController {
         }
     }
 
-    public function insertUser($data) {
+    private function insertUser($data) {
         $result = $this->validateInputs($data['username']);
 
         if ($result === true) {
@@ -95,7 +88,7 @@ class UserController {
         }
     }
 
-    public function editUser($data) {
+    private function editUser($data) {
         $result = $this->validateEditInputs($data['id'], $data['username']);
 
         if ($result === true) {
@@ -112,12 +105,12 @@ class UserController {
         }
     }
 
-    public function deleteUser($id) {
+    private function deleteUser($id) {
         $this->userService->delete($id);
         http_response_code(200);
     }
 
-    public function validateInputs($username) {
+    private function validateInputs($username) {
         if ($this->userService->getUserByUsername(htmlspecialchars($username))) {
             return 'Username already exists';
         } 
@@ -125,11 +118,17 @@ class UserController {
         return true;
     }
 
-    public function validateEditInputs($id, $username) {
+    private function validateEditInputs($id, $username) {
         if ($this->userService->getUserByUsername(htmlspecialchars($username)) && $this->userService->getUserByUsername(htmlspecialchars($username))->getId() !== $id) {
             return 'Username already exists';
         } 
         
         return true;
+    }
+
+    private function sendUnauthorizedResponse($message) {
+        http_response_code(401);
+        echo json_encode(["message" => $message]);
+        exit;
     }
 }

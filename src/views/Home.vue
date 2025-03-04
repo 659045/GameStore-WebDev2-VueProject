@@ -41,17 +41,6 @@ export default {
         this.errorMessage = 'Error fetching games';
       }
     },
-    methods: {
-        addToCart(gameId, data) {
-            console.log('Added to cart', gameId, data);
-        },
-        addToWishlist(gameId, data) {
-            console.log('Added to wishlist', gameId, data);
-        },
-        removeFromWishlist(gameId, data) {
-            console.log('Removed from wishlist', gameId, data);
-        },
-    },
 };
 </script>
 

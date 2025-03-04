@@ -18,9 +18,7 @@ class GameController {
             $authorizationHeader = $headers['Authorization'] ?? '';
 
             if ($_SERVER["REQUEST_METHOD"] !== 'GET' && empty($authorizationHeader)) {
-                http_response_code(401);
-                echo json_encode(["message" => "Authorization token is missing"]);
-                return;
+                $this->sendUnauthorizedResponse("Authorization token is missing");
             }
 
             $token = str_replace('Bearer ', '', $authorizationHeader);
@@ -42,9 +40,7 @@ class GameController {
                     break;
                 case 'POST':
                     if (!$decoded) {
-                        http_response_code(401);
-                        echo json_encode(["message" => "Invalid token"]);
-                        return;
+                        $this->sendUnauthorizedResponse("Invalid token");
                     }
 
                     if (empty($_POST['title']) || empty($_POST['description']) || !isset($_POST['price']) || empty($_FILES['image'])) {
@@ -61,9 +57,7 @@ class GameController {
                     break;
                 case 'DELETE':
                     if (!$decoded) {
-                        http_response_code(401);
-                        echo json_encode(["message" => "Invalid token"]);
-                        return;
+                        $this->sendUnauthorizedResponse("Invalid token");
                     }
 
                     $data = json_decode(file_get_contents('php://input'), true);
@@ -86,7 +80,7 @@ class GameController {
         }
     }
 
-    function insertGame() {
+    private function insertGame() {
         $game = new Game();
         $game->setTitle(htmlspecialchars($_POST['title']));
         $game->setDescription(htmlspecialchars($_POST['description']));
@@ -106,7 +100,7 @@ class GameController {
         http_response_code(201);
     }
 
-    function editGame() {
+    private function editGame() {
         $game = new Game();
         $game->setId(htmlspecialchars($_POST['id']));
         $game->setTitle(htmlspecialchars($_POST['title']));
@@ -126,8 +120,14 @@ class GameController {
         $this->gameService->edit($game);
     }
 
-    function deleteGame($id) {
+    private function deleteGame($id) {
         $this->gameService->delete($id);
     } 
+
+    private function sendUnauthorizedResponse($message) {
+        http_response_code(401);
+        echo json_encode(["message" => $message]);
+        exit;
+    }
 }
 ?>

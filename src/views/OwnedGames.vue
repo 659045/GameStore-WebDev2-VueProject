@@ -29,30 +29,35 @@ export default {
         NavBar,
     },
     mounted() {
-      try {
-        const user_id = localStorage.getItem('user_id');
+      this.fetchOwnedGames();
+    },
+    methods: {
+      fetchOwnedGames() {
+        try {
+          const user_id = localStorage.getItem('user_id');
 
-        axios.get(`http://localhost/api/owned?user_id=${user_id}`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          },
-        }).then((response) => {
-          if (response.data === 0) {
-            this.errorMessage = 'You do not own any games';
-          }
+          axios.get(`http://localhost/api/owned?user_id=${user_id}`, {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+          }).then((response) => {
+            if (response.data === 0) {
+              this.errorMessage = 'You do not own any games';
+            }
 
-          response.data.forEach((game) => {
-            axios.get(`http://localhost/api/game?id=${game.id}`, {
-              headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-              },
-            }).then((response) => {
-              this.games.push(response.data);
+            response.data.forEach((game) => {
+              axios.get(`http://localhost/api/game?id=${game.id}`, {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+              }).then((response) => {
+                this.games.push(response.data);
+              });
             });
           });
-        });
-      } catch (error) {
-        this.errorMessage = 'Error fetching owned games';
+        } catch (error) {
+          this.errorMessage = 'Error fetching owned games';
+        }
       }
     },
 }

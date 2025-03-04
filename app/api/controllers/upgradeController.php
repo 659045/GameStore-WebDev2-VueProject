@@ -18,18 +18,14 @@ class UpgradeController {
             $authorizationHeader = $headers['Authorization'] ?? '';
 
             if ($_SERVER["REQUEST_METHOD"] !== 'GET' && empty($authorizationHeader)) {
-                http_response_code(401);
-                echo json_encode(["message" => "Authorization token is missing"]);
-                return;
+                $this->sendUnauthorizedResponse("Authorization token is missing");
             }
 
             $token = str_replace('Bearer ', '', $authorizationHeader);
             $decoded = $this->authService->validateToken($token);
 
             if (!$decoded) {
-                http_response_code(401);
-                echo json_encode(["message" => "Invalid token"]);
-                return;
+                $this->sendUnauthorizedResponse("Invalid token");
             }
 
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -46,9 +42,15 @@ class UpgradeController {
         }
     }
 
-    public function upgrade() {
+    private function upgrade() {
         $id = htmlspecialchars($_POST['id']);
 
         $this->userService->upgrade($id);
+    }
+
+    private function sendUnauthorizedResponse($message) {
+        http_response_code(401);
+        echo json_encode(["message" => $message]);
+        exit;
     }
 }

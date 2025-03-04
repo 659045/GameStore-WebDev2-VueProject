@@ -24,14 +24,17 @@
               Buy
             </button>
           </template>
-          <label :id="'labelError' + game.id" class="p-2 mt-2 ml-auto label"></label>
+          <label v-show="errorMessage" class="text-center w-100 alert alert-danger">{{ errorMessage }}</label>     
+          <label v-show="successMessage" class="text-center w-100 alert alert-success">{{ successMessage }}</label>
         </div>
       </div>
     </div>
   </template>
   
-  <script>
-  export default {
+<script>
+import axios from 'axios';
+
+export default {
     name: 'GameItem',
     props: {
       game: Object,
@@ -41,16 +44,18 @@
     data() {
       return {
         isLoggedIn: localStorage.getItem('isLoggedIn'),
-        role: localStorage.getItem('role')
+        role: localStorage.getItem('role'),
+        errorMessage: '',
+        successMessage: '',
       };
     },
     computed: {
       showWishlistButton() {
         return (this.role === 'premium' || this.role === 'admin') && !this.ownedGames;
       },
-      // isGameInWishlist() {
-      //   return this.wishList.some(item => item.game_id === this.game.id);
-      // }
+      isGameInWishlist() {
+        
+      }
     },
     methods: {
       toggleWishlist() {
@@ -59,28 +64,40 @@
           user_id: this.user_id,
           game_id: gameId
         };
-  
-        const isInWishlist = this.isGameInWishlist;
-  
-        if (isInWishlist) {
-          this.$emit('remove-from-wishlist', gameId, data);
 
-        } else {
-          this.$emit('add-to-wishlist', gameId, data);
-        }
+        // const isInWishlist = this.isGameInWishlist;
+
+        // if (isInWishlist) {
+        //   this.$emit('remove-from-wishlist', gameId, data);
+
+        // } else {
+        //   this.$emit('add-to-wishlist', gameId, data);
+        // }
       },
       addToCart() {
-        const gameId = this.game.id;
-        const data = { id: gameId };
-  
-        
+        console.log(this.game.id);
+        try {
+          axios.post('http://localhost/api/cart', {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+            data: {
+                id: gameId,
+            },
+          })
+        } catch (error) {
+          
+        }
+
+
       },
       route(path) {
         this.$router.push(path);
       }
     }
-  };
-  </script>
+};
+</script>
   
   <style scoped>
   img {
