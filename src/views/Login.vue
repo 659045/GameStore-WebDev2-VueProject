@@ -19,6 +19,7 @@
 <script>
 import axios from 'axios';
 import NavBar from '../components/NavBar.vue';
+import { jwtDecode } from 'jwt-decode';
 
 export default {
     name: 'Login',
@@ -44,9 +45,12 @@ export default {
                 });
 
                 if (response.status === 200) {
-                    localStorage.setItem('user_id', response.data.user_id);
-                    localStorage.setItem('username', response.data.username);
-                    localStorage.setItem('role', response.data.role);
+                    let decoded = jwtDecode(response.data.token);
+
+                    localStorage.setItem('token', response.data.token);
+                    localStorage.setItem('user_id', decoded.user_id);
+                    localStorage.setItem('username', decoded.username);
+                    localStorage.setItem('role', decoded.role);
                     localStorage.setItem('isLoggedIn', true);
                     this.$router.push('/');
                 } else {

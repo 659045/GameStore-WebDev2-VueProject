@@ -32,13 +32,21 @@ export default {
       try {
         const user_id = localStorage.getItem('user_id');
 
-        axios.get(`http://localhost/api/owned?user_id=${user_id}`).then((response) => {
+        axios.get(`http://localhost/api/owned?user_id=${user_id}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+        }).then((response) => {
           if (response.data === 0) {
             this.errorMessage = 'You do not own any games';
           }
 
           response.data.forEach((game) => {
-            axios.get(`http://localhost/api/game?id=${game.id}`).then((response) => {
+            axios.get(`http://localhost/api/game?id=${game.id}`, {
+              headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+              },
+            }).then((response) => {
               this.games.push(response.data);
             });
           });
@@ -52,7 +60,7 @@ export default {
 
 <style scoped>
   .content-container {
-    height: 100vh;
+    height: 150vh;
     width: 100%;
   }
 

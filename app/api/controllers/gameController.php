@@ -1,16 +1,31 @@
 <?php
 require __DIR__ . '/../../services/gameService.php';
+require __DIR__ . '/../../services/authService.php';
 
 class GameController {
 
     private $gameService;
+    private $authService;
 
     function __construct() {
         $this->gameService = new GameService();
+        $this->authService = new AuthService();
     }
 
     public function index() {
         try {
+            $headers = apache_request_headers();
+            $authorizationHeader = $headers['Authorization'] ?? '';
+
+            if ($_SERVER["REQUEST_METHOD"] !== 'GET' && empty($authorizationHeader)) {
+                http_response_code(401);
+                echo json_encode(["message" => "Authorization token is missing"]);
+                return;
+            }
+
+            $token = str_replace('Bearer ', '', $authorizationHeader);
+            $decoded = $this->authService->validateToken($token);
+
             switch ($_SERVER["REQUEST_METHOD"]) {
                 case 'GET':
                     header("Content-type: application/json");
@@ -26,9 +41,15 @@ class GameController {
                     }
                     break;
                 case 'POST':
+                    if (!$decoded) {
+                        http_response_code(401);
+                        echo json_encode(["message" => "Invalid token"]);
+                        return;
+                    }
+
                     if (empty($_POST['title']) || empty($_POST['description']) || !isset($_POST['price']) || empty($_FILES['image'])) {
                         http_response_code(400);
-                        echo json_encode(["message" => $POST['title'], "description" => $_POST['description'], "price" => $_POST['price'], "image" => $_FILES['image']]);
+                        echo json_encode(["message" => $_POST['title'], "description" => $_POST['description'], "price" => $_POST['price'], "image" => $_FILES['image']]);
                         return;
                     }
 
@@ -39,6 +60,12 @@ class GameController {
                     }
                     break;
                 case 'DELETE':
+                    if (!$decoded) {
+                        http_response_code(401);
+                        echo json_encode(["message" => "Invalid token"]);
+                        return;
+                    }
+
                     $data = json_decode(file_get_contents('php://input'), true);
 
                     if (empty($data['id'])) {

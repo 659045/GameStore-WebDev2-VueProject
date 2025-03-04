@@ -49,7 +49,8 @@ export default {
             try {
                 const response = await axios.get('http://localhost/api/user', {
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
                     },
                     params: {
                         username: localStorage.getItem('username')
@@ -70,7 +71,8 @@ export default {
             try {
                 const response = await axios.post('http://localhost/api/user', {
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
                     },
                     id: this.user.id,
                     username: this.user.username,
@@ -94,6 +96,7 @@ export default {
                 const response = await axios.delete('http://localhost/api/user', {
                     headers: {
                         'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
                     },
                     data: {
                         id: this.user.id

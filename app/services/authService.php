@@ -1,6 +1,8 @@
 <?php 
 
 require_once __DIR__ . '/loginService.php';
+require_once __DIR__ . '/userService.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -9,27 +11,34 @@ class AuthService {
 
     private $secretKey;
     private $loginService;
+    private $userService;
 
     public function __construct() {
-        $this->secretKey = require __DIR__ . '/../config/secret.php';
+        $config = require __DIR__ . '/../config/secret.php';
+        $this->secretKey = $config['key'];
         $this->loginService = new LoginService();
+        $this->userService = new UserService();
     }
 
     public function authenticate($username, $password) {
-        $user = $this->loginService->login($username, $password);
+        $result = $this->loginService->login($username, $password);
 
-        if ($user) {
+        if ($result) {
+            $user = $this->userService->getUserByUsername($username);
+
             $issuedAt = time();
             $expirationTime = $issuedAt + 86400;
             $payload = [
-                'user_id' => $user['id'],
-                'username' => $user['username'],
-                'role' => $user['role'],
+                'user_id' => $user->getId(),
+                'username' => $user->getUsername(),
+                'role' => $user->getRole(),
                 'iat' => $issuedAt,
                 'exp' => $expirationTime
             ];
+
+            $token = JWT::encode($payload, $this->secretKey, 'HS256');
             
-            return JWT::encode($payload, $this->secretKey, 'HS256');
+            return $token;
         }
         return false;
     }

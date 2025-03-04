@@ -85,7 +85,7 @@
   <style scoped>
   img {
     height: 300px;
-    width: 300px;
+    width: 250px;
     display: block;
     margin: 0 auto;
   }

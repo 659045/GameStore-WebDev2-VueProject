@@ -26,8 +26,8 @@ class LoginController {
                 $password = htmlspecialchars($data['password']);
 
                 $result = $this->authService->authenticate($username, $password);
-                
-                if ($result !== false) {
+
+                if ($result) {
                     http_response_code(200);
                     echo json_encode(["token" => $result]);
                 } else {

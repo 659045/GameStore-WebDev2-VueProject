@@ -118,6 +118,7 @@ export default {
                 const response = await axios.post('http://localhost/api/game', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     }
                 })
             
@@ -150,6 +151,7 @@ export default {
                 const response = await axios.post('http://localhost/api/game', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     }
                 })
 
@@ -173,6 +175,7 @@ export default {
                 const response = await axios.delete('http://localhost/api/game', {
                     headers: {
                         'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     },
                     data: {
                         id: gameId,
@@ -237,7 +240,7 @@ export default {
 
 <style scoped>
 .content-container {
-    height: 100vh;
+    height: 150vh;
 }
 
 .fade-enter-active, .fade-leave-active {

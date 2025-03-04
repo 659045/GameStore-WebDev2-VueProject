@@ -31,32 +31,50 @@ const router = createRouter({
     {
       path: '/owned-games',
       name: 'OwnedGames',
-      component: OwnedGames
+      component: OwnedGames,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/manage-games',
       name: 'ManageGames',
-      component: GameManagement
+      component: GameManagement,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/user',
       name: 'User',
-      component: User
+      component: User,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/wishlist',
       name: 'Wishlist',
-      component: Wishlist
+      component: Wishlist,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/cart',
       name: 'Cart',
-      component: Cart
+      component: Cart,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/user/upgrade',
       name: 'Upgrade',
-      component: Upgrade
+      component: Upgrade,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/404',
@@ -64,6 +82,19 @@ const router = createRouter({
       component: NotFound
     }
   ]
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    const isLoggedIn = JSON.parse(localStorage.getItem('isLoggedIn'))
+    if (!isLoggedIn) {
+      next({ name: 'NotFound' })
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
 })
 
 export default router

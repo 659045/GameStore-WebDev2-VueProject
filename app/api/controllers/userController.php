@@ -1,18 +1,40 @@
 <?php
 require __DIR__ . '/../../services/userService.php';
+require __DIR__ . '/../../services/authService.php';
 
 class UserController {
     
     private $userService;
+    private $authService;
 
     function __construct() {
         $this->userService = new UserService();
+        $this->authService = new AuthService();
     }
 
     public function index() {
         try {
+
+            $headers = apache_request_headers();
+            $authorizationHeader = $headers['Authorization'] ?? '';
+
+            if ($_SERVER["REQUEST_METHOD"] !== 'POST' && empty($authorizationHeader)) {
+                http_response_code(401);
+                echo json_encode(["message" => "Authorization token is missing"]);
+                return;
+            }
+
+            $token = str_replace('Bearer ', '', $authorizationHeader);
+            $decoded = $this->authService->validateToken($token);
+
             switch ($_SERVER["REQUEST_METHOD"]) {
                 case "GET":
+                    if (!$decoded) {
+                        http_response_code(401);
+                        echo json_encode(["message" => "Invalid token"]);
+                        return;
+                    }
+
                     header("Content-type: application/json");
                     if (isset($_GET['username'])) {
                         $user = $this->userService->getUserByUsername(htmlspecialchars($_GET['username']));
@@ -23,13 +45,13 @@ class UserController {
                     }
                     break;
                 case "POST":
-                    $data = json_decode(file_get_contents('php://input'), true);
-
                     if (empty($data['username']) || empty($data['password'])) {
                         http_response_code(400);
                         echo json_encode(["message" => "Fill in all fields"]);
                         return;
                     }
+
+                    $data = json_decode(file_get_contents('php://input'), true);
 
                     if (isset($data['id'])) {
                         $this->editUser($data);
@@ -38,6 +60,12 @@ class UserController {
                     }
                     break;
                 case "DELETE":
+                    if (!$decoded) {
+                        http_response_code(401);
+                        echo json_encode(["message" => "Invalid token"]);
+                        return;
+                    }
+
                     $data = json_decode(file_get_contents('php://input'));
                     $this->deleteUser(htmlspecialchars($data->id));
                     break;
