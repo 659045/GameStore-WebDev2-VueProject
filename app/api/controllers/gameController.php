@@ -81,6 +81,12 @@ class GameController {
     }
 
     private function insertGame() {
+        if ($this->gameService->getGameByTitle(htmlspecialchars($_POST['title']))) {
+            http_response_code(400);
+            echo json_encode(["message" => "Game already exists"]);
+            return;
+        }
+
         $game = new Game();
         $game->setTitle(htmlspecialchars($_POST['title']));
         $game->setDescription(htmlspecialchars($_POST['description']));
@@ -101,6 +107,14 @@ class GameController {
     }
 
     private function editGame() {
+        $game = $this->gameService->getGameByTitle(htmlspecialchars($_POST['title']));
+
+        if ($game && $game->getId() !== htmlspecialchars($_POST['id'])) {
+            http_response_code(400);
+            echo json_encode(["message" => "Game already exists"]);
+            return;
+        }
+
         $game = new Game();
         $game->setId(htmlspecialchars($_POST['id']));
         $game->setTitle(htmlspecialchars($_POST['title']));

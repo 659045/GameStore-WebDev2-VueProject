@@ -5,7 +5,7 @@
   <div>
     <img class="front-image" src="https://media.gq-magazine.co.uk/photos/645b5c3c8223a5c3801b8b26/16:9/w_1280,c_limit/100-best-games-hp-b.jpg">
     <div class="game-grid mt-5">
-        <GameItem v-for="game in games" :game="game" :wishList="wishList" :ownedGames="false"/>
+        <GameItem v-for="game in games" :game="game" :wishList="wishList" :show-wishlist-button="showWishlistButton"/>
     </div>
     <label v-show="errorMessage" class="label mx-auto">{{ errorMessage }}</label>
   </div>
@@ -22,6 +22,7 @@ export default {
       return {
         games: [],
         errorMessage: '',
+        showWishlistButton: localStorage.getItem('role') !== 'normal',
       };
     },
     components: {
@@ -34,13 +35,25 @@ export default {
           this.games = response.data;
         });
 
-        axios.get('http://localhost/api/wishlist').then((response) => {
-          this.wishList = response.data;
-        });
+        this.fetchWishList();
       } catch (error) {
         this.errorMessage = 'Error fetching games';
       }
     },
+    methods: {
+      fetchWishList() {
+        axios.get('http://localhost/api/wishlist', {
+          params: {
+            user_id: localStorage.getItem('user_id'),
+          },
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+        }).then((response) => {
+          this.wishList = response.data;
+        });
+      }
+    }
 };
 </script>
 

@@ -16,6 +16,8 @@ class CartService {
         } else {
             array_push($_SESSION["cart"], $id);
         }
+
+        return $_SESSION["cart"];
     }
 
     public function delete($id) {

@@ -1,6 +1,5 @@
 <?php
 require __DIR__ . '/../../services/wishListService.php';
-require __DIR__ . '/../../models/wishList.php';
 
 class WishListController {
 

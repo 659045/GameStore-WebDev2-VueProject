@@ -30,14 +30,16 @@ class CartController {
 
             switch ($_SERVER['REQUEST_METHOD']) {
                 case 'GET':
+                    header("Content-type: application/json");
                     $cart = $this->cartService->getCart();
 
-                    header("Content-type: application/json");
                     echo json_encode($cart);
                     break;
                 case 'POST':
                     $data = json_decode(file_get_contents('php://input'));
-                    $this->cartService->insert(htmlspecialchars($data->id));
+                    $cart = $this->cartService->insert(htmlspecialchars($data->id));
+
+                    echo json_encode($cart);
                     break;
                 case 'DELETE':
                     $data = json_decode(file_get_contents('php://input'));

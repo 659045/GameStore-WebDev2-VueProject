@@ -232,6 +232,8 @@ export default {
                 this.selectedGameId = gameId;
                 this.selectedGame = this.games.find(game => game.id === gameId);
             }
+            
+            this.fetchGames();
         },
     },
 };

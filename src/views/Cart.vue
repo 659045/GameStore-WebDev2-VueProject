@@ -32,31 +32,33 @@ export default {
         this.fetchCart();
     },
     methods: {
-      fetchCart() {
-        try {
-          axios.get(`http://localhost/api/cart`, {
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-          }).then((response) => {
-            if (response.data === 0) {
-              this.errorMessage = 'Your cart is empty';
-            }
-
-            response.data.forEach((game) => {
-              axios.get(`http://localhost/api/game?id=${game.id}`, {
+        async fetchCart() {
+            try {
+                axios.get(`http://localhost/api/cart`, {
                 headers: {
-                  'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 },
-              }).then((response) => {
-                this.games.push(response.data);
-              });
-            });
-          });
-        } catch (error) {
-          this.errorMessage = 'Error fetching cart';
-        }
-      },
+                }).then((response) => {
+                if (response.data === 0) {
+                    this.errorMessage = 'Your cart is empty';
+                }
+
+                response.data.forEach((gameId) => {
+                    axios.get(`http://localhost/api/game?id=${gameId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        }
+                    })  
+                    .then((response) => {
+                        this.games.push(response.data);
+                    });
+                });
+                });
+
+            } catch (error) {
+                this.errorMessage = 'Error fetching cart';
+            }
+        },
     },
 }
 </script>
