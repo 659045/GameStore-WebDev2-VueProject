@@ -8,11 +8,11 @@ class CartService {
 
     public function insert($id) {
         if(!isset($_SESSION["cart"])) {
-            $_SESSION["cart"] = array();
+            $_SESSION["cart"] = [];
         }
 
         if(in_array($id, $_SESSION["cart"])) {
-            return;
+            return $_SESSION["cart"];
         } else {
             array_push($_SESSION["cart"], $id);
         }

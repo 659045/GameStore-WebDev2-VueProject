@@ -3,7 +3,8 @@
       <div class="card mb-5">
         <div class="card-body d-flex flex-column">
           <template v-if="showWishlistButton">
-            <button @click="toggleWishlist" class="btn btn-primary w-25 ml-auto wishlist-button mb-3" :value="game.id">
+            <h1>{{ isGameInWishlist }}</h1>
+            <button :disabled=isGameOwned @click="toggleWishlist" class="btn btn-primary w-25 ml-auto wishlist-button mb-3" :value="game.id">
               <i :class="['fa', isGameInWishlist ? 'fa-heart' : 'fa-heart-o']"></i>
             </button>
           </template>
@@ -36,6 +37,7 @@
   </template>
   
 <script>
+
 import axios from 'axios';
 
 export default {
@@ -43,6 +45,7 @@ export default {
     props: {
       game: Object,
       wishList: Array,
+      ownedGames: Array,
       showWishlistButton: Boolean
     },
     data() {
@@ -57,13 +60,18 @@ export default {
       isGameInWishlist() {
         return this.wishList.some((game) => game.game_id === this.game.id);
       },
+      isGameOwned() {
+        return this.ownedGames.some((game) => game.game_id === this.game.id);
+      },
     },
     methods: {
-      toggleWishlist() {
+      async toggleWishlist() {
         if (this.isGameInWishlist) {
-          this.removeFromWishlist();
+          await this.removeFromWishlist();
+          this.$emit('updateWishlist');
         } else {
-          this.addToWishlist();
+          await this.addToWishlist();
+          this.$emit('updateWishlist');
         }
       },
       async addToWishlist() {
@@ -81,7 +89,6 @@ export default {
 
           this.successMessage = 'Game added to wishlist';
           this.resetMessages();
-          this.$emit('updateWishlist');
         } catch (error) {
           this.errorMessage = error.response.data.message;
           this.resetMessages();
@@ -109,21 +116,18 @@ export default {
       },
       async addToCart() {
         try {
-          await axios.post('http://localhost/api/cart', {
-            id: this.game.id,
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-          });
-
-          axios.get(`http://localhost/api/cart`, {
-            headers: {
+          const response = await axios.post('http://localhost/api/cart',
+            { id: this.game.id },
+            {
+              headers: {
+                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-          });
+              },
+            }
+          );
+
+          console.log(this.game.id);
+          console.log(response.data);
 
           this.successMessage = 'Game added to cart';
           this.resetMessages();

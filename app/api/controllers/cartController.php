@@ -37,7 +37,22 @@ class CartController {
                     break;
                 case 'POST':
                     $data = json_decode(file_get_contents('php://input'));
-                    $cart = $this->cartService->insert(htmlspecialchars($data->id));
+                    if (empty($data->id)) {
+                        http_response_code(400);
+                        echo json_encode(["message" => "Game ID is required"]);
+                        exit;
+                    }
+
+                    $id = $data->id ?? null;
+
+                    if (!is_numeric($id) || intval($id) <= 0) {
+                        http_response_code(400);
+                        echo json_encode(["message" => "Invalid game ID"]);
+                        exit;
+                    }
+                    $id = intval($id);
+
+                    $cart = $this->cartService->insert($id);
 
                     echo json_encode($cart);
                     break;

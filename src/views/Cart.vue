@@ -7,7 +7,7 @@
         <div class="game-grid mt-5">
             <GameItem v-for="game in games" :game="game"/>
         </div>
-        <label v-show="errorMessage" class="text-center w-100 alert alert-danger">{{ errorMessage }}</label>     
+        <h1 v-show="errorMessage" class="text-center w-100">{{ errorMessage }}</h1>     
     </div>
 </template>
 
@@ -34,12 +34,13 @@ export default {
     methods: {
         async fetchCart() {
             try {
-                axios.get(`http://localhost/api/cart`, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-                }).then((response) => {
-                if (response.data === 0) {
+                const response = await axios.get(`http://localhost/api/cart`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    },
+                });
+
+                if (response.data.length === 0) {
                     this.errorMessage = 'Your cart is empty';
                 }
 
@@ -53,8 +54,6 @@ export default {
                         this.games.push(response.data);
                     });
                 });
-                });
-
             } catch (error) {
                 this.errorMessage = 'Error fetching cart';
             }
