@@ -1,33 +1,28 @@
 <?php
+require_once __DIR__ . '/../repositories/cartRepository.php';
 
 class CartService {
 
-    public function getCart() {
-        return $_SESSION["cart"] ?? [];
+    private $cartRepository;
+
+    function __construct() {
+        $this->cartRepository = new CartRepository;
     }
 
-    public function insert($id) {
-        if(!isset($_SESSION["cart"])) {
-            $_SESSION["cart"] = [];
-        }
+    public function getCartByUserId($user_id) {
+        return $this->cartRepository->getCartByUserId($user_id);
+    }
+    
 
-        if(in_array($id, $_SESSION["cart"])) {
-            return $_SESSION["cart"];
-        } else {
-            array_push($_SESSION["cart"], $id);
-        }
-
-        return $_SESSION["cart"];
+    public function insert($cart) {
+        return $this->cartRepository->insert($cart);
     }
 
-    public function delete($id) {
-        if (!isset($_SESSION["cart"])) {
-            return;
-        }
+    public function deleteAllFromUser($user_id) {
+        return $this->cartRepository->deleteAllFromUser($user_id);
+    }
 
-        $index = array_search($id, $_SESSION["cart"]);
-        if ($index !== false) {
-            unset($_SESSION["cart"][$index]);
-        }
+    public function delete($cart) {
+        return $this->cartRepository->delete($cart);
     }
 }

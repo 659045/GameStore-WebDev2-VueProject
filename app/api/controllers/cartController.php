@@ -31,34 +31,47 @@ class CartController {
             switch ($_SERVER['REQUEST_METHOD']) {
                 case 'GET':
                     header("Content-type: application/json");
-                    $cart = $this->cartService->getCart();
-
-                    echo json_encode($cart);
+                    if (!empty($_GET['user_id'])) {
+                        $user_id = htmlspecialchars($_GET['user_id']);
+                        $cart = $this->cartService->getCartByUserId(htmlspecialchars($_GET['user_id']));
+                        echo json_encode($cart);
+                    } else {
+                        http_response_code(400);
+                        echo json_encode(["message" => "Error fetching cart"]);
+                    }
                     break;
                 case 'POST':
                     $data = json_decode(file_get_contents('php://input'));
-                    if (empty($data->id)) {
+
+                    if (empty($data->game_id) || empty($data->user_id)) {
                         http_response_code(400);
-                        echo json_encode(["message" => "Game ID is required"]);
-                        exit;
+                        echo json_encode(["message" => "Error adding cart"]);
+                        return;
                     }
 
-                    $id = $data->id ?? null;
+                    $cart = new Cart();
+                    $cart->setGameId(htmlspecialchars($data->game_id));
+                    $cart->setUserId(htmlspecialchars($data->user_id));
 
-                    if (!is_numeric($id) || intval($id) <= 0) {
-                        http_response_code(400);
-                        echo json_encode(["message" => "Invalid game ID"]);
-                        exit;
-                    }
-                    $id = intval($id);
-
-                    $cart = $this->cartService->insert($id);
-
-                    echo json_encode($cart);
+                    $this->cartService->insert($cart);
+                    http_response_code(201);
                     break;
                 case 'DELETE':
                     $data = json_decode(file_get_contents('php://input'));
-                    $this->cartService->delete(htmlspecialchars($data->id));
+
+                    if (!empty($data->game_id) && !empty($data->user_id)) {
+                        $cart = new Cart();
+                        $cart->setGameId(htmlspecialchars($data->game_id));
+                        $cart->setUserId(htmlspecialchars($decoded->user_id));
+
+                        $this->cartService->delete($cart);
+                    } elseif (!empty($data->user_id)) {
+                        $this->cartService->deleteAllFromUser(htmlspecialchars($data->user_id));
+                    } else {
+                        http_response_code(400);
+                        echo json_encode(["message" => "Error deleting cart"]);
+                        return;
+                    }
                     break;
                 default:
                     break;
