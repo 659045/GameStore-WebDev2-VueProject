@@ -32,7 +32,6 @@ class CartController {
                 case 'GET':
                     header("Content-type: application/json");
                     if (!empty($_GET['user_id'])) {
-                        $user_id = htmlspecialchars($_GET['user_id']);
                         $cart = $this->cartService->getCartByUserId(htmlspecialchars($_GET['user_id']));
                         echo json_encode($cart);
                     } else {

@@ -5,7 +5,7 @@
     <div class="content-container p-5">
         <h1>Wishlist</h1>
         <div class="game-grid mt-5">
-            <GameItem v-for="game in games" :game="game" :show-wishlist-button="false"/>
+            <GameItem v-for="game in games" :game="game" :show-wishlist-button="false" :show-remove-wishlist-button="true" @updateWishlist="fetchWishList"/>
         </div>
         <label v-show="errorMessage" class="text-center w-100 alert alert-danger">{{ errorMessage }}</label>     
     </div>
@@ -32,26 +32,30 @@ export default {
         this.fetchWishList();
     },
     methods: {
-        fetchWishList() {
+        async fetchWishList() {
+            this.games = [];
+
             try {
-                axios.get(`http://localhost/api/wishlist`, {
+                const response = await axios.get(`http://localhost/api/wishlist`, {
                     params: {
-                    user_id: localStorage.getItem('user_id'),
+                        user_id: localStorage.getItem('user_id'),
                     },
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     },
                 })
-                .then((response) => {
-                    response.data.forEach((game) => {
-                        axios.get(`http://localhost/api/game?id=${game.game_id}`, {
-                            headers: {
-                                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                            }
-                        })  
-                        .then((response) => {
-                            this.games.push(response.data);
-                        });
+
+                response.data.forEach((game) => {
+                    axios.get(`http://localhost/api/game`, {
+                        params: {
+                            id: game.game_id,
+                        },
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        }
+                    })  
+                    .then((response) => {
+                        this.games.push(response.data);
                     });
                 });
             } catch (error) {

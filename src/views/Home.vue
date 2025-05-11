@@ -5,7 +5,7 @@
   <div>
     <img class="front-image" src="https://media.gq-magazine.co.uk/photos/645b5c3c8223a5c3801b8b26/16:9/w_1280,c_limit/100-best-games-hp-b.jpg">
     <div class="game-grid mt-5">
-        <GameItem v-for="game in games" :game="game" :wishList="wishList" :ownedGames="ownedGames" :show-wishlist-button="showWishlistButton" @updateWishlist="fetchWishList"/>
+        <GameItem v-for="game in games" :game="game" :wishList="wishList" :ownedGames="ownedGames" :show-wishlist-button="showWishlistButton" :show-cart-button="showCartButton" @updateGames="fetchGames" @updateWishlist="fetchWishList"/>
     </div>
     <label v-show="errorMessage" class="label mx-auto">{{ errorMessage }}</label>
   </div>
@@ -21,8 +21,10 @@ export default {
     data() {
       return {
         games: [],
+        wishList: [],
         errorMessage: '',
         showWishlistButton: localStorage.getItem('role') !== 'normal',
+        showCartButton: true,
       };
     },
     components: {
@@ -31,10 +33,7 @@ export default {
     },
     mounted() {
       try {
-        axios.get('http://localhost/api/game').then((response) => {
-          this.games = response.data;
-        });
-
+        this.fetchGames();
         this.fetchWishList();
         this.fetchOwnedGames();
       } catch (error) {
@@ -42,7 +41,19 @@ export default {
       }
     },
     methods: {
+      async fetchGames() {
+        this.games = [];
+
+        try {
+          const response = await axios.get('http://localhost/api/game');
+          this.games = response.data;
+        } catch (error) {
+          this.errorMessage = 'Error fetching games';
+        }
+      },
       async fetchWishList() {
+        this.wishList = [];
+
         const response = await axios.get('http://localhost/api/wishlist', {
           params: {
             user_id: localStorage.getItem('user_id'),

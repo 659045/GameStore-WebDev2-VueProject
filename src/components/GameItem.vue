@@ -3,8 +3,7 @@
       <div class="card mb-5">
         <div class="card-body d-flex flex-column">
           <template v-if="showWishlistButton">
-            <h1>{{ isGameInWishlist }}</h1>
-            <button :disabled=isGameOwned @click="toggleWishlist" class="btn btn-primary w-25 ml-auto wishlist-button mb-3" :value="game.id">
+            <button @click="toggleWishlist" class="btn btn-primary w-25 ml-auto wishlist-button mb-3" :value="game.id">
               <i :class="['fa', isGameInWishlist ? 'fa-heart' : 'fa-heart-o']"></i>
             </button>
           </template>
@@ -16,8 +15,14 @@
           <small class="text-muted">Price</small>
           <p>{{ game.price }}</p>
           <template v-if="isLoggedIn">
-            <button @click="addToCart" class="btn btn-primary w-50 ml-auto add-to-cart-button" :value="game.id">
+            <button v-if="showCartButton" @click="addToCart" class="btn btn-primary w-50 ml-auto add-to-cart-button" :value="game.id">
               Add to cart
+            </button>
+            <button v-if="showRemoveCartButton" @click="removeFromCart" class="btn btn-danger w-50 ml-auto add-to-cart-button" :value="game.id">
+              Remove from cart
+            </button>
+            <button v-if="showRemoveWishlistButton" @click="removeFromWishlist" class="btn btn-danger w-50 ml-auto add-to-cart-button" :value="game.id">
+              Remove from wishlist
             </button>
           </template>
           <template v-else>
@@ -39,6 +44,7 @@
 <script>
 
 import axios from 'axios';
+import { render } from 'vue';
 
 export default {
     name: 'GameItem',
@@ -46,7 +52,10 @@ export default {
       game: Object,
       wishList: Array,
       ownedGames: Array,
-      showWishlistButton: Boolean
+      showWishlistButton: Boolean,
+      showRemoveWishlistButton: Boolean,
+      showCartButton: Boolean,
+      showRemoveCartButton: Boolean,
     },
     data() {
       return {
@@ -68,15 +77,21 @@ export default {
       async toggleWishlist() {
         if (this.isGameInWishlist) {
           await this.removeFromWishlist();
-          this.$emit('updateWishlist');
+          console.log(wishList);
         } else {
           await this.addToWishlist();
-          this.$emit('updateWishlist');
+          console.log(wishList);
         }
       },
       async addToWishlist() {
+        if (this.isGameOwned) {
+          this.errorMessage = 'You already own this game';
+          this.resetMessages();
+          return;
+        }
+
         try {
-          await axios.post('http://localhost/api/wishlist', {
+           const response = await axios.post('http://localhost/api/wishlist', {
             user_id: localStorage.getItem('user_id'),
             game_id: this.game.id,
           },
@@ -87,7 +102,10 @@ export default {
             },
           });
 
-          this.successMessage = 'Game added to wishlist';
+          if (response.status === 200) {
+            this.successMessage = 'Game added to wishlist';
+            this.$emit('updateWishList');
+          }
           this.resetMessages();
         } catch (error) {
           this.errorMessage = error.response.data.message;
@@ -96,7 +114,7 @@ export default {
       },
       async removeFromWishlist() {
         try {
-          await axios.delete('http://localhost/api/wishlist', {
+           const response = await axios.delete('http://localhost/api/wishlist', {
             data: {
               game_id: this.game.id,
               user_id: localStorage.getItem('user_id'),
@@ -107,7 +125,10 @@ export default {
             },
           });
 
-          this.successMessage = 'Game removed from wishlist';
+          if (response.status === 200) {
+            this.successMessage = 'Game removed from wishlist';
+            this.$emit('updateWishList');
+          }
           this.resetMessages();
         } catch (error) {
           this.errorMessage = error.response.data.message;
@@ -117,19 +138,46 @@ export default {
       async addToCart() {
         try {
           const response = await axios.post('http://localhost/api/cart',
-            { id: this.game.id },
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-              },
-            }
-          );
+          {
+            game_id: this.game.id,
+            user_id: localStorage.getItem('user_id'),
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+          });
 
-          console.log(this.game.id);
-          console.log(response.data);
+          if (response.status === 201) {
+            this.successMessage = 'Game added to cart';
+            this.$emit('updateCart');
+          }
 
-          this.successMessage = 'Game added to cart';
+          this.resetMessages();
+        } catch (error) {
+          this.errorMessage = error.response.data.message;
+          this.resetMessages();
+        }
+      },
+      async removeFromCart() {
+        try {
+          const response = await axios.delete('http://localhost/api/cart', {
+            data: {
+              game_id: this.game.id,
+              user_id: localStorage.getItem('user_id'),
+            },
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+          });
+
+          if (response.status === 200) {
+            this.successMessage = 'Game removed from cart';
+            this.$emit('updateCart');
+          }
+
           this.resetMessages();
         } catch (error) {
           this.errorMessage = error.response.data.message;

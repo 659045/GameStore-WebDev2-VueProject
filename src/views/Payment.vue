@@ -2,33 +2,30 @@
     <header>
         <NavBar />
     </header>
+
     <div class="content-container p-5">
-        <h1>Cart</h1>
+        <h1>Payment</h1>
         <div class="d-flex justify-content-end">
-            <button class="btn btn-primary btn-lg ms-auto">Continue to payment</button>
+            <button class="btn btn-primary btn-lg ms-auto">Pay</button>
         </div>  
-        <div class="game-grid mt-5">
-            <GameItem v-for="game in games" :game="game" :show-cart-button="false" :show-remove-cart-button="true" @updateCart="fetchCart"/>
-        </div>
-        <h1 v-show="errorMessage" class="text-center w-100">{{ errorMessage }}</h1>     
     </div>
+
 </template>
+
 
 <script>
 import axios from 'axios';
 import NavBar from '../components/NavBar.vue';
-import GameItem from '../components/GameItem.vue';
 
-export default {
-    name: 'Cart',
+export default{
+    name: 'Payment',
     data() {
-      return {
-        games: [],
-        errorMessage: '',
-      };
+        return {
+            games: [],
+            errorMessage: '',
+        };
     },
     components: {
-        GameItem,
         NavBar,
     },
     mounted() {
@@ -59,9 +56,8 @@ export default {
                         },
                         headers: {
                             'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                        }
-                    })  
-                    .then((response) => {
+                        },
+                    }).then((response) => {
                         this.games.push(response.data);
                     });
                 });
@@ -71,16 +67,9 @@ export default {
         },
     },
 }
+
 </script>
 
 <style scoped>
-  .content-container {
-    height: 150vh;
-    width: 100%;
-  }
 
-  .game-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-  }
 </style>
