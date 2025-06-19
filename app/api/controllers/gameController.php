@@ -109,7 +109,7 @@ class GameController {
     private function editGame() {
         $game = $this->gameService->getGameByTitle(htmlspecialchars($_POST['title']));
 
-        if ($game && $game->getId() !== htmlspecialchars($_POST['id'])) {
+        if ($game && $game->getId() !== (int)htmlspecialchars($_POST['id'])) {
             http_response_code(400);
             echo json_encode(["message" => "Game already exists"]);
             return;
