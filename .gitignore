@@ -16,6 +16,7 @@ coverage
 
 /cypress/videos/
 /cypress/screenshots/
+/app/vendor/
 
 # Editor directories and files
 .vscode/*
@@ -30,3 +31,4 @@ coverage
 *.tsbuildinfo
 
 *.env
+

@@ -77,10 +77,8 @@ export default {
       async toggleWishlist() {
         if (this.isGameInWishlist) {
           await this.removeFromWishlist();
-          console.log(wishList);
         } else {
           await this.addToWishlist();
-          console.log(wishList);
         }
       },
       async addToWishlist() {
