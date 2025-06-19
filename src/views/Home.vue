@@ -1,14 +1,14 @@
 <template>
-  <header>
-    <NavBar />
-  </header>
-  <div>
-    <img class="front-image" src="https://media.gq-magazine.co.uk/photos/645b5c3c8223a5c3801b8b26/16:9/w_1280,c_limit/100-best-games-hp-b.jpg">
-    <div class="game-grid mt-5">
-        <GameItem v-for="game in games" :game="game" :wishList="wishList" :ownedGames="ownedGames" :show-wishlist-button="showWishlistButton" :show-cart-button="showCartButton" @updateGames="fetchGames" @updateWishlist="fetchWishList"/>
+    <header>
+        <NavBar />
+    </header>
+    <div>
+        <img class="front-image" src="https://media.gq-magazine.co.uk/photos/645b5c3c8223a5c3801b8b26/16:9/w_1280,c_limit/100-best-games-hp-b.jpg">
+        <div class="game-grid mt-5">
+            <GameItem v-for="game in games" :game="game" :wishList="wishList" :ownedGames="ownedGames" :show-wishlist-button="showWishlistButton" :show-cart-button="showCartButton" @updateGames="fetchGames" @updateWishlist="fetchWishList"/>
+        </div>
+        <label v-show="errorMessage" class="label mx-auto">{{ errorMessage }}</label>
     </div>
-    <label v-show="errorMessage" class="label mx-auto">{{ errorMessage }}</label>
-  </div>
 </template>
 
 <script>
@@ -82,15 +82,15 @@ export default {
 </script>
 
 <style scoped>
-  .front-image {
+.front-image {
     height: 500px;
     width: 100%;
     display: block;
     margin: 1% auto 5% auto
-  }
+}
 
-  .game-grid {
+.game-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-  }
+}
 </style>

@@ -66,20 +66,20 @@ export default {
 </script>
 
 <style scoped>
-    .form-group {
-        width: 25%;
-        margin: 8% auto;
-    }
+.form-group {
+    width: 25%;
+    margin: 8% auto;
+}
 
-    .form-control {
-        margin-bottom: 10%;
-    }
+.form-control {
+    margin-bottom: 10%;
+}
 
-    .content-container {
-        height: 100vh;
-    }
+.content-container {
+    height: 100vh;
+}
 
-    .btn {
-        width: 30%;
-    }
+.btn {
+    width: 30%;
+}
 </style>

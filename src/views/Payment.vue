@@ -140,7 +140,7 @@ methods: {
 
 <style scoped>
 img {
-  max-height: 180px;
-  object-fit: cover;
+    max-height: 180px;
+    object-fit: cover;
 }
 </style>

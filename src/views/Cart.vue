@@ -78,13 +78,13 @@ export default {
 </script>
 
 <style scoped>
-  .content-container {
+.content-container {
     height: 150vh;
     width: 100%;
-  }
+}
 
-  .game-grid {
+.game-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-  }
+}
 </style>

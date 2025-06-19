@@ -19,9 +19,9 @@ export default {
 </script>
 
 <style scoped>
-    .content-container {
-        display: flex;
-        justify-content: center;
-        height: 100vh;
-    }
+.content-container {
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+}
 </style>
