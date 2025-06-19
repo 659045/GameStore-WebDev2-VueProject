@@ -12,9 +12,9 @@ password: 123
 username: normal
 password: 123
 
-Intructions:
+Setup Intructions:
 Frontend
-npm install - to install all the necesarry packeges.
+npm install - to install all the necesarry packages.
 npm run dev - to run the environment
 
 Backend
