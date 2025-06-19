@@ -23,7 +23,7 @@ export default {
         games: [],
         wishList: [],
         errorMessage: '',
-        showWishlistButton: localStorage.getItem('role') !== 'normal',
+        showWishlistButton: localStorage.getItem('role') !== 'normal' && localStorage.getItem('role') !== null,
         showCartButton: true,
       };
     },
