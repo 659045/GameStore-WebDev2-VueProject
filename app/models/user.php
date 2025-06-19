@@ -3,7 +3,6 @@
 class User implements JsonSerializable {
 
     private int $id;
-    private string $email;
     private string $username;
     private string $password;
     private string $role;

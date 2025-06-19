@@ -56,7 +56,7 @@ mounted() {
 },
 computed: {
     totalPrice() {
-    return this.games.reduce((total, game) => total + parseFloat(game.price), 0);
+        return this.games.reduce((total, game) => total + parseFloat(game.price), 0);
     },
 },
 methods: {
@@ -96,6 +96,7 @@ methods: {
     async pay() {
         this.successMessage = 'Payment successful! Thank you for your purchase.';
         await this.addToOwnedGames();
+        await this.removeGameFromWishlist();
         await this.resetCart();
         this.paymentSuccess = true;
     },
@@ -114,6 +115,24 @@ methods: {
         this.games = [];
         } catch (error) {
         this.errorMessage = 'Error resetting cart';
+        }
+    },
+    async removeGameFromWishlist() {
+        try {
+            for (const game of this.games) {
+                await axios.delete(`http://localhost/api/wishlist`, {
+                    data: {
+                        user_id: localStorage.getItem('user_id'),
+                        game_id: game.id,
+                    },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    },
+                });
+            }
+        } catch (error) {
+            this.errorMessage = 'Error removing game from wishlist';
         }
     },
     async addToOwnedGames() {
