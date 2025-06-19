@@ -29,7 +29,15 @@ class OwnedController {
                     break;
                 case 'POST':
                     $data = json_decode(file_get_contents('php://input'));
-                    $this->addOwnedGame($data);
+
+                    $user_id = htmlspecialchars($data->user_id);
+                    $game_id = htmlspecialchars($data->game_id);
+            
+                    $ownedGame = new OwnedGame;
+                    $ownedGame->setUserId($user_id);
+                    $ownedGame->setGameId($game_id);
+            
+                    $this->ownedGameService->insert($ownedGame);
                     break;
                 default:
                     break;
@@ -38,18 +46,5 @@ class OwnedController {
             http_response_code(500);
             echo json_encode(["message" => "Internal server error: " . $e->getMessage()]);
         }
-    }
-
-    public function addOwnedGame($data) {
-        $user_id = htmlspecialchars($data->user_id);
-        $game_id = htmlspecialchars($data->game_id);
-
-        $ownedGame = new OwnedGame;
-        $ownedGame->setUserId($user_id);
-        $ownedGame->setGameId($game_id);
-
-        $this->cartService->delete($game_id);
-
-        $this->ownedGameService->insert($ownedGame);
     }
 }

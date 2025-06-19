@@ -5,12 +5,15 @@
     <div class="content-container p-5">
         <h1>Cart</h1>
         <div class="d-flex justify-content-end">
-            <button class="btn btn-primary btn-lg ms-auto">Continue to payment</button>
+            <router-link to="/payment" class="btn btn-primary btn-lg ms-auto">
+                Continue to payment
+            </router-link>
         </div>  
         <div class="game-grid mt-5">
             <GameItem v-for="game in games" :game="game" :show-cart-button="false" :show-remove-cart-button="true" @updateCart="fetchCart"/>
         </div>
         <h1 v-show="errorMessage" class="text-center w-100">{{ errorMessage }}</h1>     
+        <div v-if="message" class="alert alert-warning text-center">{{ message }}</div>
     </div>
 </template>
 
@@ -25,6 +28,7 @@ export default {
       return {
         games: [],
         errorMessage: '',
+        message: '',
       };
     },
     components: {
@@ -49,7 +53,7 @@ export default {
                 });
 
                 if (response.data.length === 0) {
-                    this.errorMessage = 'Your cart is empty';
+                    this.message = 'Your cart is empty';
                 }
 
                 response.data.forEach((game) => {
