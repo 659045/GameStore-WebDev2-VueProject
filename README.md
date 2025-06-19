@@ -18,4 +18,6 @@ npm install - to install all the necesarry packages.
 npm run dev - to run the environment
 
 Backend
+cd app - navigate to backend folder
+composer install - install dependencies
 docker compose up - run the container
