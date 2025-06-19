@@ -69,9 +69,6 @@ export default {
       isGameInWishlist() {
         return this.wishList.some((game) => game.game_id === this.game.id);
       },
-      isGameOwned() {
-        return this.ownedGames.some((game) => game.game_id === this.game.id);
-      },
     },
     methods: {
       async toggleWishlist() {
@@ -82,14 +79,26 @@ export default {
         }
       },
       async addToWishlist() {
-        if (this.isGameOwned) {
-          this.errorMessage = 'You already own this game';
-          this.resetMessages();
-          return;
-        }
-
         try {
-           const response = await axios.post('http://localhost/api/wishlist', {
+          const wishListResponse = await axios.get('http://localhost/api/wishlist', {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+            params: {
+              user_id: localStorage.getItem('user_id')
+            },
+          });
+
+          const wishListItems = wishListResponse.data;
+          const alreadyInWishlist = wishListItems.some(item => item.game_id === this.game.id);
+
+          if (alreadyInWishlist) {
+            this.errorMessage = 'Game is already in the wishlist';
+            this.resetMessages();
+            return;
+          }
+
+          const response = await axios.post('http://localhost/api/wishlist', {
             user_id: localStorage.getItem('user_id'),
             game_id: this.game.id,
           },
@@ -105,6 +114,8 @@ export default {
             this.$emit('updateWishList');
           }
           this.resetMessages();
+
+          this.isGameInWishlist = true;
         } catch (error) {
           this.errorMessage = error.response.data.message;
           this.resetMessages();
@@ -135,8 +146,25 @@ export default {
       },
       async addToCart() {
         try {
-          const response = await axios.post('http://localhost/api/cart',
-          {
+          const cartResponse = await axios.get(`http://localhost/api/cart`, {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+            params: {
+              user_id: localStorage.getItem('user_id')
+            },
+          });
+
+          const cartItems = cartResponse.data;
+          const alreadyInCart = cartItems.some(item => item.game_id === this.game.id);
+
+          if (alreadyInCart) {
+            this.errorMessage = 'Game is already in the cart';
+            this.resetMessages();
+            return;
+          }
+
+          const response = await axios.post('http://localhost/api/cart', {
             game_id: this.game.id,
             user_id: localStorage.getItem('user_id'),
           },

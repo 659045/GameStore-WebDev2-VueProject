@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql
--- Generation Time: May 10, 2025 at 03:39 PM
--- Server version: 11.5.2-MariaDB-ubu2404
--- PHP Version: 8.2.23
+-- Generation Time: Jun 19, 2025 at 05:43 PM
+-- Server version: 11.2.2-MariaDB-1:11.2.2+maria~ubu2204
+-- PHP Version: 8.2.14
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -31,7 +31,7 @@ CREATE TABLE `cart` (
   `id` int(11) NOT NULL,
   `game_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -52,6 +52,7 @@ CREATE TABLE `game` (
 --
 
 INSERT INTO `game` (`id`, `title`, `description`, `price`, `image`) VALUES
+(1, 'Fortnite', 'great game', 0, 'fortnite.jpg'),
 (2, 'God of War', 'Go on a adventure', 59.99, 'god_of_war.jpg'),
 (3, 'Witcher 3', 'Play as Gerald from Rivia', 39.99, 'witcher_3.jpg'),
 (7, 'Red Dead Redemption II', 'follows the exploits of Arthur Morgan, an outlaw and member of the Van der Linde gang', 59.99, 'red_dead_redemption_II.jpg'),
@@ -75,6 +76,7 @@ CREATE TABLE `owned_game` (
 --
 
 INSERT INTO `owned_game` (`id`, `user_id`, `game_id`) VALUES
+(1, 1, 1),
 (2, 1, 2),
 (4, 3, 3),
 (5, 2, 9),
@@ -89,6 +91,7 @@ INSERT INTO `owned_game` (`id`, `user_id`, `game_id`) VALUES
 
 CREATE TABLE `user` (
   `id` int(11) NOT NULL,
+  `email` varchar(255) NOT NULL,
   `username` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `role` varchar(255) NOT NULL
@@ -98,10 +101,10 @@ CREATE TABLE `user` (
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`id`, `username`, `password`, `role`) VALUES
-(1, 'admin', '$2y$10$OztE0Ck917ntHVohb4LSdeoXaRSdrYzlCOeRVkN/ovcIvOi9vM40e', 'admin'),
-(2, 'premium', '$2y$10$c41LVUXL0TusPRDZS0M.O.6rj6B.9483r31VGOBcct7DGVnyOcaYS', 'premium'),
-(3, 'normal', '$2y$10$EtdBvttcHp6w.TDjABaS5O5v0QBqSDtPp7/KjaSh1dmNquHZWqyE.', 'normal');
+INSERT INTO `user` (`id`, `email`, `username`, `password`, `role`) VALUES
+(1, 'admin@gmail.com', 'admin', '$2y$10$OztE0Ck917ntHVohb4LSdeoXaRSdrYzlCOeRVkN/ovcIvOi9vM40e', 'admin'),
+(2, 'premium@gmail.com', 'premium', '$2y$10$c41LVUXL0TusPRDZS0M.O.6rj6B.9483r31VGOBcct7DGVnyOcaYS', 'premium'),
+(3, 'normal@gmail.com', 'normal', '$2y$10$EtdBvttcHp6w.TDjABaS5O5v0QBqSDtPp7/KjaSh1dmNquHZWqyE.', 'normal');
 
 -- --------------------------------------------------------
 
@@ -165,13 +168,13 @@ ALTER TABLE `wish_list`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `game`
 --
 ALTER TABLE `game`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `owned_game`
@@ -183,13 +186,13 @@ ALTER TABLE `owned_game`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT for table `wish_list`
 --
 ALTER TABLE `wish_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=106;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
